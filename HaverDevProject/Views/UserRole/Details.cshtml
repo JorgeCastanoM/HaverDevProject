@@ -1,0 +1,64 @@
+﻿@model HaverDevProject.ViewModels.UserDetailsVM
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="col-md-6 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>User</h1>
+</div>
+<div class="col-md-6 col-10 mx-auto">
+    <div class="card border-2">
+        <div class="card-header bg-custom-color mb-2">
+            <h2 class="m-0">User Details</h2>
+        </div>
+        <div class="card-body col-lg-10 col-11 mx-auto">
+            <dl class="row">
+                <dt class="col-sm-3">
+                    First Name
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.User.FirstName)
+                </dd>
+                <dt class="col-sm-3">
+                    Last Name
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.User.LastName)
+                </dd>
+                <dt class="col-sm-3">
+                    Email
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.User.Email)
+                </dd>
+                <dt class="col-sm-3">
+                    Role
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Role
+                </dd>  
+                <dt class="col-sm-3">
+                    Status
+                </dt>
+                <dd class="col-sm-9">
+                    @(Model.User.Status ? "Active" : "Inactive")
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer">
+            <div class="form-group d-flex justify-content-end mt-2">
+                <div>
+                    <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn custom-btn-color">
+                        <i class="bi bi-arrow-90deg-left"></i> Back to the Users List
+                    </button>
+                </div>
+                <div>
+                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.User.Id">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

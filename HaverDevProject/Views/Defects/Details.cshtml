@@ -1,0 +1,40 @@
+﻿@model HaverDevProject.Models.Defect
+
+@{
+    ViewData["Title"] = "Defect";
+}
+
+<div class="col-md-6 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Defects</h1>
+</div>
+<div class="col-md-6 col-10 mx-auto">
+    <div class="card border-2">
+        <div class="card-header bg-custom-color mb-2">
+            <h2>Defect Type Details</h2>
+        </div>
+        <div class="card-body col-lg-10 col-11 mx-auto">
+            <dl class="row">
+                <dt class="col-sm-10">
+                    Defect Type
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.DefectName)
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer">
+            <div class="form-group d-flex justify-content-end mt-2">                
+                <div>
+                    <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn custom-btn-color">
+                        <i class="bi bi-arrow-90deg-left"></i> Back to the Defect Type List
+                    </button>
+                </div>
+                <div>
+                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.DefectId">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

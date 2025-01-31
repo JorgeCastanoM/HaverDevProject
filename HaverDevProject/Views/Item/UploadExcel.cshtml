@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Upload Items";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+
+    <div class="alert alert-info" role="alert">
+        <strong>Download the Template:</strong> Before uploading your items, please download and fill out the provided template. This ensures that all necessary information is correctly formatted, making the upload process smoother and more efficient.
+    </div>
+    <div class="form-group">
+        <a href="~/templates/item-upload-template.xlsx" download="ItemUploadTemplate.xlsx" class="btn btn-primary">
+            <i class="bi bi-file-earmark-excel"></i> Download Template
+        </a>
+    </div>
+
+    <div class="form-group">
+        <label for="file">Excel File:</label>
+        <input type="file" name="file" accept=".xlsx" required />
+    </div>
+    
+    <div>
+        <button type="button" onclick="window.history.back()" class="btn custom-btn-color">
+           <i class="bi bi-arrow-90deg-left"></i> Back to the Item List
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-upload"></i> Upload
+        </button>
+    </div>
+</form>

@@ -1,0 +1,34 @@
+﻿@{
+    string controllerFriendlyName = "";
+
+    if (ViewData.ContainsKey("ControllerFriendlyName"))
+    {
+        controllerFriendlyName = ViewData["ControllerFriendlyName"].ToString();
+
+        // Replace "Eng" with "Engineer" and "OP" with "Operations Manager"
+        if (controllerFriendlyName.StartsWith("Eng"))
+        {
+            controllerFriendlyName = "Engineer" + controllerFriendlyName.Substring(3);
+        }
+        else if (controllerFriendlyName.StartsWith("Op"))
+        {
+            controllerFriendlyName = "Operations Manager" + controllerFriendlyName.Substring(2);
+        }
+    }
+
+    if (ViewData.ContainsKey("ControllerName"))
+    {
+        if (ViewData.ContainsKey("returnURL"))
+        {
+            <a href='@ViewData["returnURL"]'>Back to the @controllerFriendlyName List</a>
+        }
+        else
+        {
+            <a asp-action="Index">Back to the @controllerFriendlyName List</a>
+        }
+    }
+    else
+    {
+        <a asp-action="Index">Back to the List</a>
+    }
+}

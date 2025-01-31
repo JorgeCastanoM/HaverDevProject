@@ -1,0 +1,34 @@
+﻿@model HaverDevProject.Models.Supplier
+
+<form asp-controller="Supplier" asp-action="Create" id="createSupplierForm">
+    <div class="text-danger validation-summary-errors"><ul id="ErrorListSupplier"></ul></div>
+    <div class="row">
+        <div class="col-md-12">        
+            <div class="form-group">
+                <label asp-for="SupplierCode" class="control-label"><strong>Code</strong> <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Code to identify the company">(e.g. 790891)</small> <span class="fw-bold text-danger">*</span></label>
+                <input asp-for="SupplierCode" class="form-control" placeholder="Code" />
+                <span asp-validation-for="SupplierCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SupplierName" class="control-label"><strong>Name</strong> <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Legal company name">(e.g. HBC Engineering)</small> <span class="fw-bold text-danger">*</span></label>
+                <input asp-for="SupplierName" class="form-control" placeholder="Name" />
+                <span asp-validation-for="SupplierName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SupplierContactName" class="control-label"><strong>Contact Name</strong> <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Contact name of the company">(e.g. John Smith)</small></label>
+                <input asp-for="SupplierContactName" class="form-control" placeholder="Contact Name" />
+                <span asp-validation-for="SupplierContactName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SupplierEmail" class="control-label"><strong>Email</strong> <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Contact email of the company">(e.g. company@mail.com)</small></label>
+                <input asp-for="SupplierEmail" class="form-control" placeholder="Email" />
+                <span asp-validation-for="SupplierEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group text-end">
+                <input type="submit" id="submitSupplierCreate" value="Create" class="btn btn-primary" />
+            </div>        
+        </div>
+    </div>
+</form>
+
+

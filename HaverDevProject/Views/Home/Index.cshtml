@@ -1,0 +1,513 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="dashboard mt-3">
+    @if (User.IsInRole("Admin"))
+    {             
+        <div class="container">
+
+            <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h2>Hello @ViewBag.FirstName @ViewBag.LastName, <span class="badge bg-secondary">@ViewBag.Role</span></h2>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-xl-4 mb-3">
+                            <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-primary" asp-area="" asp-controller="Ncr" asp-action="Index">
+                                <i class="bi bi-file-earmark-spreadsheet"></i>
+                                <p>NCR Log</p>
+                            </a>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-xl-4 mb-3">
+                            <div class="dropdown">
+                                <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary">
+                                    <i class="bi bi-building-gear"></i>
+                                    <p class="dropdown-toggle">
+                                        Sections
+                                    </p>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrQa" asp-action="Index">Quality</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrEng" asp-action="Index">Engineer</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrOperation" asp-action="Index">Operations</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrProcurement" asp-action="Index">Procurement</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrReInspect" asp-action="Index">ReInspection</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-xl-4 mb-3">
+                            <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="Supplier" asp-action="Index">
+                                <i class="bi bi-buildings"></i>
+                                <p>Suppliers</p>
+                            </a>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6 col-xl-4 mb-3">
+                            <a class=" dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="UserRole" asp-action="Index">
+                                <i class="bi bi-buildings"></i>
+                                <p>Users</p>
+                            </a>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-xl-4 mb-3">
+                            <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-primary" asp-area="" asp-controller="Home" asp-action="KPIDashboard">
+                                <i class="bi bi-graph-down"></i>
+                                <p>KPI Dashboard</p>
+                            </a>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-xl-4 mb-3">
+                            <div class="dropdown">
+                                <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary">
+                                    <i class="bi bi-building-gear"></i>
+                                    <p class="dropdown-toggle">
+                                        Administrator
+                                    </p>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Item" asp-action="Index">Items</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Defects" asp-action="Index">Defect Types</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Lookup" asp-action="Index">Lookup Values</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-2">
+                </div>
+            </div>
+            
+        </div>
+
+    }
+ 
+    @if (User.IsInRole("Quality"))
+    {
+        <div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <h2>Hello @ViewBag.FirstName @ViewBag.LastName, <span class="badge bg-secondary">@ViewBag.Role</span></h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrReInspect" asp-action="Index">
+                        <i class="bi bi-bell-fill"></i>
+                        <p id="pendingCountReInsp"></p>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <a class="dashboard-item newncr text-decoration-none bg-success" asp-area="" asp-controller="NcrQa" asp-action="Create">
+                        <i class="bi bi-file-earmark-plus"></i>
+                        <p>New NCR</p>
+                    </a>
+                </div>          
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrQa" asp-action="Index">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        <p>NCR Quality Log</p>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-3">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrReInspect" asp-action="Index">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        <p>NCR ReInspection Log</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    @if (User.IsInRole("Engineer"))
+    {
+        <div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <h2>Hello @ViewBag.FirstName @ViewBag.LastName, <span class="badge bg-secondary">@ViewBag.Role</span></h2>
+                </div>
+            </div>
+            <div>
+                @*                 <div class="col-md-12 mb-3">
+            <a class="btn bg-primary font-weight-bold text-white btn-lg" href="/NcrOperation/Index" style="width: 100%;">
+            <i class="bi bi-file-earmark-spreadsheet"></i> NCR Log
+            </a>
+            </div> *@
+                <div id="tableContainer" class="container border rounded">
+                    <h3 class="mt-3">Pending NCRs: <span class="bg-warning font-weight-bold px-4 rounded" id="pendingCountEng"></span></h3>
+                    <table class="table table-striped table-reponsive table-hover mt-2">
+                        <thead class="custom-header-bg">
+                            <tr>
+                                <th>NCR Number</th>
+                                <th>Supplier</th>
+                                <th>Time Elapsed</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    @if (User.IsInRole("Operations"))
+    {
+        <div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <h2>Hello @ViewBag.FirstName @ViewBag.LastName, <span class="badge bg-secondary">@ViewBag.Role</span></h2>
+                </div>
+            </div>
+            <div>
+                @*                 <div class="col-md-12 mb-3">
+            <a class="btn bg-primary font-weight-bold text-white btn-lg" href="/NcrOperation/Index" style="width: 100%;">
+            <i class="bi bi-file-earmark-spreadsheet"></i> NCR Log
+            </a>
+            </div> *@
+                <div id="tableContainer" class="container border rounded">
+                    <h3 class="mt-3">Pending NCRs: <span class="bg-warning font-weight-bold px-4 rounded" id="pendingCountOp"></span></h3>
+                    <table class="table table-striped table-reponsive table-hover mt-2">
+                        <thead class="custom-header-bg">
+                            <tr>
+                                <th>NCR Number</th>
+                                <th>Supplier</th>
+                                <th>Time Elapsed</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    }
+    @if (User.IsInRole("Procurement"))
+    {
+        <div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <h2>Hello @ViewBag.FirstName @ViewBag.LastName, <span class="badge bg-secondary">@ViewBag.Role</span></h2>
+                </div>
+            </div>
+            <div>
+                @*                 <div class="col-md-12 mb-3">
+            <a class="btn bg-primary font-weight-bold text-white btn-lg" href="/NcrOperation/Index" style="width: 100%;">
+            <i class="bi bi-file-earmark-spreadsheet"></i> NCR Log
+            </a>
+            </div> *@
+                <div id="tableContainer" class="container border rounded">
+                    <h3 class="mt-3">Pending NCRs: <span class="bg-warning font-weight-bold px-4 rounded" id="pendingCountProc"></span></h3>
+                    <table class="table table-striped table-reponsive table-hover mt-2">
+                        <thead class="custom-header-bg">
+                            <tr>
+                                <th>NCR Number</th>
+                                <th>Supplier</th>
+                                <th>Time Elapsed</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@section Scripts {
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/NcrPending.js"></script>
+
+        <script>
+            var section;
+        </script>
+    @if (User.IsInRole("Admin"))
+    {
+        <script>
+            section = "NcrReInspect"
+            function updatePendingCountReInsp(section) {
+                $.ajax({
+                    url: '@Url.Action("GetPendingCount", "NcrReInspect")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#pendingCountReInsp').html('Pending NCRs for ReInspection:  ' + data);
+                    },
+                    error: function () {
+                        console.error('Error fetching pending count');
+                    }
+                });
+            }
+
+            $(document).ready(function () {
+                updatePendingCountReInsp();
+            });
+        </script>
+    }
+    @if (User.IsInRole("Engineer"))
+    {
+        <script>
+            section = "NcrEng"
+            function updatePendingCountEng(section) {
+                $.ajax({
+                    url: '@Url.Action("GetPendingCount", "NcrEng")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#pendingCountEng').html(" " + data);
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error fetching data for NcrEng. Status: ' + status + '. Error: ' + error);
+                    }
+                });
+            }
+
+            $(document).ready(function () {
+                updatePendingCountEng();
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                GetNcrs();
+            });
+
+            function GetNcrs() {
+                $.ajax({
+                    url: '/NcrEng/GetNcrs',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (response) {
+                        if (response.length === 0) {
+                            $('#tblBody').html('<tr><td colspan="4">No New NCRs available</td></tr>');
+                        } else {
+                            $('#tblBody').empty(); // Clear existing rows
+                            for (let i = 0; i < response.length; i++) {
+                                const ncr = response[i];
+                                const created = new Date(ncr.created);
+                                const now = new Date();
+
+                                console.log(created);
+
+                                // Calculate time difference in days using dates
+                                const differenceInDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+
+                                // Check if difference is less than 1 day
+                                const daysElapsed = differenceInDays > 1 ? differenceInDays : 0;
+
+                                // Construct the time elapsed string
+                                const timeElapsed = daysElapsed > 1
+                                    ? daysElapsed + ' days ago'
+                                    : daysElapsed + ' day ago';
+                                const $row = $('<tr>');
+                                $row.append(`<td>${ncr.ncrNumber}</td>`);
+                                $row.append(`<td>${ncr.supplierName}</td>`);
+                                $row.append(`<td>${timeElapsed}</td>`); // Display days elapsed
+                                $row.append(`<td><button class="btn btn-success" onclick="start('${ncr.ncrNumber}')"><i class="bi bi-play-fill"></i> Start</button></td>`);
+                                $('#tblBody').append($row);
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching data.'); // Provide more specific error message if possible
+                    }
+                });
+            }
+
+
+
+            function start(ncrNumber) {
+                window.location.href = '/' + section + '/Create?ncrNumber=' + ncrNumber;
+            }
+        </script>
+        }
+    @if (User.IsInRole("Operations"))
+    {
+        <script>
+            section = "NcrOperation"
+            function updatePendingCountOp(section) {
+                $.ajax({
+                    url: '@Url.Action("GetPendingCount", "NcrOperation")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#pendingCountOp').html(' ' + data);
+                    },
+                    error: function () {
+                        console.error('Error fetching pending count');
+                    }
+                });
+            }
+
+            $(document).ready(function () {
+                updatePendingCountOp();
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                GetNcrs();
+            });
+
+            function GetNcrs() {
+                $.ajax({
+                    url: '/NcrOperation/GetNcrs',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (response) {
+                        if (response.length === 0) {
+                            $('#tblBody').html('<tr><td colspan="4">No New NCRs available</td></tr>');
+                        } else {
+                            $('#tblBody').empty(); // Clear existing rows
+                            for (let i = 0; i < response.length; i++) {
+                                const ncr = response[i];
+                                const created = new Date(ncr.created);
+                                const now = new Date();
+
+                                console.log(created);
+
+                                // Calculate time difference in days using dates
+                                const differenceInDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+
+                                // Check if difference is less than 1 day
+                                const daysElapsed = differenceInDays > 1 ? differenceInDays : 0;
+
+                                // Construct the time elapsed string
+                                const timeElapsed = daysElapsed > 1
+                                    ? daysElapsed + ' days ago'
+                                    : daysElapsed + ' day ago';
+                                const $row = $('<tr>');
+                                $row.append(`<td>${ncr.ncrNumber}</td>`);
+                                $row.append(`<td>${ncr.supplierName}</td>`);
+                                $row.append(`<td>${timeElapsed}</td>`); // Display days elapsed
+                                $row.append(`<td><button class="btn btn-success" onclick="start('${ncr.ncrNumber}')"><i class="bi bi-play-fill"></i> Start</button></td>`);
+                                $('#tblBody').append($row);
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching data.'); // Provide more specific error message if possible
+                    }
+                });
+            }
+
+
+
+            function start(ncrNumber) {
+                window.location.href = '/' + section + '/Create?ncrNumber=' + ncrNumber;
+            }
+        </script>
+    }
+    @if (User.IsInRole("Procurement"))
+    {
+        <script>
+            section = "NcrProcurement"
+            function updatePendingCountProc(section) {
+                $.ajax({
+                    url: '@Url.Action("GetPendingCount", "NcrProcurement")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#pendingCountProc').html(' ' + data);
+                    },
+                    error: function () {
+                        console.error('Error fetching pending count');
+                    }
+                });
+            }
+
+            $(document).ready(function () {
+                updatePendingCountProc();
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                GetNcrs();
+            });
+
+            function GetNcrs() {
+                $.ajax({
+                    url: '/NcrProcurement/GetNcrs',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (response) {
+                        if (response.length === 0) {
+                            $('#tblBody').html('<tr><td colspan="4">No New NCRs available</td></tr>');
+                        } else {
+                            $('#tblBody').empty(); // Clear existing rows
+                            for (let i = 0; i < response.length; i++) {
+                                const ncr = response[i];
+                                const created = new Date(ncr.created);
+                                const now = new Date();
+
+                                console.log(created);
+
+                                // Calculate time difference in days using dates
+                                const differenceInDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+
+                                // Check if difference is less than 1 day
+                                const daysElapsed = differenceInDays > 1 ? differenceInDays : 0;
+
+                                // Construct the time elapsed string
+                                const timeElapsed = daysElapsed > 1
+                                    ? daysElapsed + ' days ago'
+                                    : daysElapsed + ' day ago';
+                                const $row = $('<tr>');
+                                $row.append(`<td>${ncr.ncrNumber}</td>`);
+                                $row.append(`<td>${ncr.supplierName}</td>`);
+                                $row.append(`<td>${timeElapsed}</td>`); // Display days elapsed
+                                $row.append(`<td><button class="btn btn-success" onclick="start('${ncr.ncrNumber}')"><i class="bi bi-play-fill"></i> Start</button></td>`);
+                                $('#tblBody').append($row);
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching data.'); // Provide more specific error message if possible
+                    }
+                });
+            }
+
+
+
+            function start(ncrNumber) {
+                window.location.href = '/' + section + '/Create?ncrNumber=' + ncrNumber;
+            }
+        </script>
+        }
+@if (User.IsInRole("Quality"))
+    {
+        <script>
+            section = "NcrReInspect"
+            function updatePendingCountReInsp(section) {
+                $.ajax({
+                    url: '@Url.Action("GetPendingCount", "NcrReInspect")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#pendingCountReInsp').html('Pending NCRs for ReInspection:  ' + data);
+                    },
+                    error: function () {
+                        console.error('Error fetching pending count');
+                    }
+                });
+            }
+
+            $(document).ready(function () {
+                updatePendingCountReInsp();
+            });
+        </script>   
+        }
+}

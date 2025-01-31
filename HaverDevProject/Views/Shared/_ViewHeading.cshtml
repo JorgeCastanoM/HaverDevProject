@@ -1,0 +1,43 @@
+﻿@{
+    string controllerFriendlyName = ViewData["ControllerFriendlyName"].ToString();
+
+    // Replace "Eng" with "Engineer" and "OP" with "Operations Manager"
+    if (controllerFriendlyName.StartsWith("Eng"))
+    {
+        controllerFriendlyName = "Engineer" + controllerFriendlyName.Substring(3);
+    }
+    else if (controllerFriendlyName.StartsWith("Op"))
+    {
+        controllerFriendlyName = "Operations Manager" + controllerFriendlyName.Substring(2);
+    }
+
+    if (ViewData["ActionName"].ToString() == "Details")
+    {
+        @:<h2>@controllerFriendlyName Details</h2>
+    }
+    else if (ViewData["ActionName"].ToString() == "Index")
+    {
+        @:<h2>@controllerFriendlyName Index</h2>
+    }
+    else if (ViewData["ActionName"].ToString() == "Delete" ||
+             ViewData["ActionName"].ToString() == "Remove")
+    {
+        // Prepare the question about deleting this record
+        // Assume we do not have a summary property
+        string summary = "this " + controllerFriendlyName;
+        if (ViewData.ModelMetadata.Properties.FirstOrDefault(p => p.PropertyName == "Summary") != null)
+        {
+            // We DO have a Summary Property!
+            summary = Model.Summary.ToString();
+        }
+
+        @:<h2>@ViewData["ActionName"] @controllerFriendlyName</h2>
+        <p>
+            <h4 class="fs-5">Are you sure you want to @(ViewData["ActionName"].ToString().ToLower()) @(summary)?</h4>
+        </p>
+    }
+    else
+    {
+        @:<h2>@ViewData["ActionName"] @controllerFriendlyName</h2>
+    }
+}

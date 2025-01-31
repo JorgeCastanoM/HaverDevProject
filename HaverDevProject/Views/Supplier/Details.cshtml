@@ -1,0 +1,82 @@
+﻿@model HaverDevProject.ViewModels.SupplierDetailsVM
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="col-md-6 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Supplier</h1>
+</div>
+<div class="col-md-6 col-10 mx-auto">
+    <div class="card border-2">
+        <div class="card-header bg-custom-color mb-2">
+            <h2 class="m-0">Supplier Details</h2>
+        </div>
+        <div class="card-body col-lg-10 col-11 mx-auto">            
+            <dl class="row">
+                <dt class = "col-sm-3">
+                    Code
+                </dt>
+                <dd class = "col-sm-9">
+                    @Html.DisplayFor(model => model.Supplier.SupplierCode)
+                </dd>
+                <dt class = "col-sm-3">
+                    Name            
+                </dt>
+                <dd class = "col-sm-9">
+                    @Html.DisplayFor(model => model.Supplier.SupplierName)
+                </dd>                
+                <dt class="col-sm-3">
+                    Contact Name
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Supplier.SupplierContactName)
+                </dd>
+                <dt class="col-sm-3">
+                    Email
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Supplier.SupplierEmail)
+                </dd>
+                <dt class="col-sm-3">
+                    Status
+                </dt>
+                <dd class="col-sm-9">
+                    @(Model.Supplier.SupplierStatus ? "Active" : "Inactive")
+                </dd>
+                @if (Model.RelatedNCRs != null && Model.RelatedNCRs.Any())
+                {
+                    <dt class="col-sm-3">
+                        Related NCRs
+                    </dt>
+                    <dd class="col-sm-9">
+                        <ul>
+                            @foreach (var ncr in Model.RelatedNCRs)
+                            {
+                                <li>
+                                    <a asp-action="SupplierReport" asp-route-id="@ncr.NcrId">@ncr.NcrNumber: @ncr.NcrQa.Item.ItemName</a>
+                                </li>
+                            }
+                        </ul>
+                    </dd>
+                }
+
+                
+            </dl>
+        </div>
+        <div class="card-footer">
+            <div class="form-group d-flex justify-content-end mt-2">
+                <div>
+                    <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
+                        <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                    </button>
+                </div>
+                <div>
+                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.Supplier.SupplierId">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>           
+            </div>
+        </div>
+    </div>
+</div>

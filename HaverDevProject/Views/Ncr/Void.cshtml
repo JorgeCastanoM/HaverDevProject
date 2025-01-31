@@ -1,0 +1,217 @@
+﻿@model IEnumerable<HaverDevProject.Models.Ncr>
+
+@{
+    ViewData["Title"] = "Void";
+}
+
+<h1><i class="bi bi-caret-right-fill"></i> Void Reports</h1>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="ncrLog-tab" href="/Ncr/Index">NCR Log</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="archive-tab" href="/Ncr/Archived">Archive</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="void-tab" data-bs-toggle="tab" href="/Ncr/Void" role="tab" aria-controls="void" aria-selected="true">Void</a>
+    </li>
+</ul>
+
+<form id="ncrForm" asp-action="Void" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
+    <div class="row mt-3 mb-2">
+        <div class="col-12 text-end">
+            <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                @ViewData["numberFilters"]
+            </button>
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <div class="card card-body bg-custom-color mb-2">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                    <label class="control-label">Filter by Suppliers:</label>
+                    @Html.TextBox("SearchSupplier", null, new { @class = "form-control" })
+                </div>
+                <div class="form-group col-lg-2">
+                    <label class="control-label">Start Date:</label>
+                    @Html.TextBox("StartDate", @ViewData["StartDate"], new { @class = "form-control", type = "date" })
+
+                </div>
+                <div class="form-group col-lg-2">
+                    <label class="control-label">End Date:</label>
+                    @Html.TextBox("EndDate", @ViewData["EndDate"], new { @class = "form-control", type = "date" })
+                </div>
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                    <label class="control-label mb-1">Find by NCR # or Defect :</label>
+                    @Html.TextBox("SearchCode", null, new { @class = "form-control" })
+                </div>
+                <div class="form-group col-lg-2 col-md-7 col-sm-10 col-10 align-self-end">
+                    <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2" />
+                    <a asp-action="Void" class="btn btn-outline-dark ms-4">Clear</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="table table-hover table-striped">
+        <thead class="custom-header-bg">
+            <tr>
+                <th></th>
+                <th style="width: 10%;" class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
+                        Created
+                        @Html.Raw(ViewData["filterApplied:Created"])
+                    </button>
+                </th>
+                <th style="width: 10%;">
+                    <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
+                        NCR #
+                        @Html.Raw(ViewData["filterApplied:NcrNumber"])
+                    </button>
+                </th>
+                <th style="width: 15%;" class="col-3">
+                    <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
+                        Supplier
+                        @Html.Raw(ViewData["filterApplied:Supplier"])
+                    </button>
+                </th>
+                <th style="width: 15%;" class="three-cols">
+                    <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
+                        Defect
+                        @Html.Raw(ViewData["filterApplied:Defect"])
+                    </button>
+                </th>
+                <th style="width: 15%;" class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="PO Number" class="btn text-light custom-btn-text-start">
+                        PO Number
+                        @Html.Raw(ViewData["filterApplied:PONumber"])
+                    </button>
+                </th>
+                <th style="width: 10%;" class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
+                        Phase
+                        @Html.Raw(ViewData["filterApplied:Phase"])
+                    </button>
+                </th>
+
+                <th style="width: 15%;" class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Last Updated" class="btn text-light custom-btn-text-start">
+                        Last Updated
+                        @Html.Raw(ViewData["filterApplied:Last Updated"])
+                    </button>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="ps-1 @((item.NcrStatus == true) ? "stillactive" : "closed" )">
+                        <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.NcrStatus == true) ? "Active" : "Closed")"></i>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrQa.NcrQacreationDate)
+                    </td>
+                    <td class="standout">
+                        @Html.DisplayFor(modelItem => item.NcrNumber)
+                    </td>
+                    <td class="col-3">
+                        @Html.DisplayFor(modelItem => item.NcrQa.Supplier.SupplierName)
+                    </td>
+                    <td class="three-cols">
+                        @Html.DisplayFor(modelItem => item.NcrQa.Defect.DefectName)
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrQa.NcrQaOrderNumber)
+                    </td>
+                    @* <td class="@((item.Ncr.NcrStatus == true) ? "stillactive" : "closed")">
+                @Html.DisplayFor(modelItem => item.Ncr.NcrStatus)
+                </td> *@
+                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrPhase)
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrLastUpdated)
+                    </td>
+
+                    <td class="align-middle">
+                        <div class="btn-group" role="group" aria-label="NCR Actions">
+                            <a asp-controller="Report" asp-action="DownloadPDFSections" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>
+
+@section Styles {
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+}
+@section Scripts {
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.btn-filter').on('click', function () {
+
+                $('#filter').val($(this).data('filter'));
+                $('#ncrForm').submit();
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#StartDate, #EndDate").change(function () {
+                dateValidation();
+            });
+
+            // Function to validate date
+            function dateValidation() {
+                var startDate = new Date($("#StartDate").val());
+                var endDate = new Date($("#EndDate").val());
+
+                // Verifying if End Date is less than Start Date
+                if (endDate < startDate) {
+                    alert("End date should be greater than Start Date");
+                    $("#EndDate").val("");
+                }
+            }
+        });
+    </script>
+
+    <!--For Autocomplete fields-->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Search Supplier AutoComplete-->
+    <script type="text/javascript">
+        $('#SearchSupplier').autocomplete({
+            minLength: 1,
+            source: '@Url.Action("GetSuppliersAuto", "Ncr")'
+        });
+    </script>
+
+}
+
+
+

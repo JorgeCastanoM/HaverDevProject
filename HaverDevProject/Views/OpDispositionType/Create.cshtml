@@ -1,0 +1,30 @@
+﻿@model HaverDevProject.Models.OpDispositionType
+
+<partial name="_ViewHeading" />
+
+<hr />
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="OpDispositionTypeName" class="control-label">Disposition</label>
+                <input asp-for="OpDispositionTypeName" class="form-control" />
+                <span asp-validation-for="OpDispositionTypeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <partial name="_BackToList" />
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

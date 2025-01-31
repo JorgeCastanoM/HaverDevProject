@@ -1,0 +1,91 @@
+﻿@model IEnumerable<HaverDevProject.Models.Defect>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="col-md-10 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Defect Types</h1>
+
+    <form id="defectForm" asp-action="Index" method="get">
+        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+        <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
+        <div class="row mt-3 mb-2">
+            <div class="d-flex justify-content-end">
+                <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="margin-right: 8px;">
+                    @ViewData["numberFilters"]
+                </button>
+
+                <a asp-action="Create" class="btn btn-primary me-2"> <i class="bi bi-plus-square-dotted"></i> Create New Defect Type</a>
+                <a asp-action="Upload" class="btn btn-primary"> <i class="bi bi-upload"></i> Upload Defect Types</a>
+            </div>
+        </div>
+
+        <div class="form-horizontal">
+            <div class="card card-body bg-custom-color mb-2">
+                <div class="row d-flex align-items-center">               
+                
+                    <div class="form-group col-5">
+                        <label class="control-label mb-1">Find by Defect Type:</label>
+                        @Html.TextBox("SearchName", null, new { @class = "form-control", placeholder = "Enter the Defect Type Name" })
+                    </div>
+                    <div class="form-group col-5 align-self-end">
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary mt-4 ms-2" />
+                        <a asp-action="Index" class="btn btn-outline-dark mt-4 ms-4">Clear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-hover table-striped">
+            <thead class="custom-header-bg">
+                <tr>
+                    <th></th>
+                    <th class="two-cols">
+                        <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
+                            Defect Type
+                            @Html.Raw(ViewData["filterApplied:DefectName"])
+                        </button>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td></td>
+                        <td class="two-cols">
+                            @Html.DisplayFor(modelItem => item.DefectName)
+                        </td>                   
+
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.DefectId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.DefectId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <partial name="_PagingNavBar" />
+    </form>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.btn-filter').on('click', function () {
+                $('#filter').val($(this).data('filter'));
+                $('#defectForm').submit();
+            });
+        });
+    </script>
+}

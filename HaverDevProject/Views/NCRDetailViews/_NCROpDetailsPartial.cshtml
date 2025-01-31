@@ -1,0 +1,230 @@
+﻿@model HaverDevProject.Models.NcrOperation
+
+<style>
+    .modal1 {
+        display: none;
+        position: fixed; 
+        z-index: 9999;  
+        padding-top: 15px;   
+        left: 0;
+        top: 0;
+        width: 100%;   
+        height: 100%;   
+        overflow: auto;   
+        background-color: rgb(0,0,0);   
+        background-color: rgba(0,0,0,0.9);   
+    }
+
+    .modal1-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;  
+    }
+
+    .close {
+        color: #fff;
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+</style>
+
+<div class="mt-2">
+            <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#purchSection" aria-expanded="@ViewBag.IsNCROpView.ToString().ToLower()" aria-controls="purchSection">
+                Operations <i class="bi bi-chevron-down"></i>
+            </button>
+
+            <div class="collapse @(ViewBag.IsNCROpView? "show" : "")" id="purchSection">
+                <div class="card">
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="two-cols-1">Diposition</th>
+                                    <th class="two-cols">Disposition Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td class="two-cols-1">@Model.Ncr.NcrOperation.OpDispositionType.OpDispositionTypeName</td>
+                                    <td class="two-cols">@Model.Ncr.NcrOperation.NcrPurchasingDescription</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Was CAR raised?</th>
+                                    <th>@(Model.Ncr.NcrOperation.Car ? "Car Number" : "")</th>
+                                    <th>Follow Up Required?</th>
+                                    <th>@(Model.Ncr.NcrOperation.FollowUp ? "Follow Up Type" : "")</th>
+                                    <th>@(Model.Ncr.NcrOperation.FollowUp ? "Follow Up Expected Date" : "")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@(Model.Ncr.NcrOperation.Car ? "Yes" : "No")</td>
+                                    <td>@Model.Ncr.NcrOperation.CarNumber</td>
+                                    <td>@(Model.Ncr.NcrOperation.FollowUp ? "Yes" : "No")</td>
+                                    <td>
+                                        @if (Model.Ncr.NcrOperation.FollowUpType != null)
+                                        {
+                                            @Model.Ncr.NcrOperation.FollowUpType.FollowUpTypeName
+                                        }
+                                    </td>
+                                    <td>@(Model.Ncr.NcrOperation.ExpectedDate?.ToString("yyyy-MM-dd") ?? "")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead class="custom-light-bg">
+                                <tr>
+                                    <th class="three-cols">Created By</th>
+                                    <th class="three-cols">Updated By</th>
+                                    <th class="three-cols">Created On</th>
+                                    <th class="three-cols">Updated On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.CreatedBy, section = "op" })</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.UpdatedBy, section = "op" })</td>
+                                    <td class="three-cols">@Model.NcrOpCreationDate.ToString("yyyy-MM-dd")</td>
+                                    <td class="three-cols">
+                                        @{
+                                            if (Model.UpdatedOn.HasValue)
+                                            {
+                                                DateTime localUpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.UpdatedOn.Value, TimeZoneInfo.Local);
+                                                @localUpdatedOn.ToString("yyyy-MM-dd HH:mm:ss")
+                                            }
+                                            else
+                                            {
+                                                @("Not available")
+                                            }
+                                        }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    @{
+                        bool hasImages = Model.OpDefectPhotos != null && Model.OpDefectPhotos.Any(p => p.OpDefectPhotoContent != null);
+                        bool hasVideos = Model.NcrOperationVideo != null;
+                    }
+                    @if (hasImages || hasVideos)
+                    {
+                        <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfoOp" aria-expanded="false" aria-controls="additionalInfo">
+                            Additional Information <i class="bi bi-chevron-down"></i>
+                        </button>
+
+                        <div class="collapse" id="additionalInfoOp">
+                            @if (hasImages)
+                            {
+                                <div class="card-header">
+                                    Images
+                                </div>
+
+                                <div class="card-body pb-0">
+                                    <div class="row justify-content-center">
+                                        @{
+                                            if (Model.OpDefectPhotos != null && Model.OpDefectPhotos.Any())
+                                            {
+                                                foreach (var photo in Model.OpDefectPhotos)
+                                                {
+                                                    if (photo.OpDefectPhotoContent != null)
+                                                    {
+                                                        string imageBase64 = Convert.ToBase64String(photo.OpDefectPhotoContent);
+                                                        string imageSrc = string.Format("data:" + photo.OpDefectPhotoContent + ";base64,{0}", imageBase64);
+
+                                                        <div class="text-center pb-3 col-6">
+                                                            <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" onclick="openModal('@imageSrc')" />
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            @if (hasVideos)
+                            {
+                                <div class="card-header">
+                                    Videos
+                                </div>
+                                <div class="card-body">
+                                    @if (Model.NcrOperationVideo != null)
+                                    {
+                                        @foreach (var videoUrl in Model.NcrOperationVideo.Split(','))
+                                        {
+                                            <a href="@videoUrl" target="_blank">Video Link</a>
+                                            <br />
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+</div>
+
+<div id="imageModal" class="modal1">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img id="modalImage" class="modal1-content" />
+</div>
+
+<script>
+    function openModal(imageSrc) {
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("imageModal");
+        modal.style.display = "none";
+    }
+</script>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("imageModal");
+
+    // Get the image and close button
+    var modalImg = document.getElementById("modalImage");
+    var closeBtn = document.getElementsByClassName("close")[0]; 
+
+    // When the user clicks anywhere outside of the image, close the modal
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // Function to open the modal
+    function openModal(imageSrc) {
+        modal.style.display = "flex";
+        modalImg.src = imageSrc;
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = "none";
+    }
+</script>

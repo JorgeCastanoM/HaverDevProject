@@ -1,0 +1,464 @@
+﻿@model HaverDevProject.Models.NcrProcurementDTO
+
+@{
+    ViewData["Title"] = "Create";
+}
+<head>
+
+    <style>
+        .supplier-return-fields {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-out; 
+            overflow: hidden;
+        }
+
+        .thumbnail {
+            max-width: 150px;
+            max-height: 150px;
+            margin: 5px;
+        }
+
+        img {
+            max-width: 150px;
+            max-height: 150px
+        }
+    </style>
+
+</head>
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Procurement</h1>
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (ViewBag.ncrDetails.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
+        }
+
+        @if (ViewBag.ncrDetails.NcrEng != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", (NcrEng)ViewBag.ncrDetails.NcrEng)
+        }
+
+        @if (ViewBag.ncrDetails.NcrOperation != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", (NcrOperation)ViewBag.ncrDetails.NcrOperation)
+        }
+    </div>
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="formProcurement" novalidate>
+        <input type="hidden" name="isDraft" value="false" id="isDraftInput" />
+        <div class="card border-2 mt-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Add to NCR</h2>
+                </div>
+                <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <strong>Ncr No.</strong>
+                            <input asp-for="NcrNumber" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <strong>Date</strong>
+                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
+                            <input asp-for="NcrProcCompleteDate" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if Supplier Requested a Return"><strong>Supplier Return Request </strong><span class="fw-bold text-danger">*</span></label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Product is to be Disposed on Site"><strong>Dispose on Site? </strong><span class="fw-bold text-danger">*</span></label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcDisposedAllowed" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcDisposedAllowed" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row supplier-return-fields">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="SupplierReturnMANum" class="control-label"><strong>Supplier RMA # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number">(e.g. RT20062090)</small></label>
+                            <input asp-for="SupplierReturnMANum" class="form-control" />
+                            <span asp-validation-for="SupplierReturnMANum" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="SupplierReturnName" class="control-label"><strong>Carrier Name </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service">(e.g. Purolator)</small></label>
+                            <input asp-for="SupplierReturnName" class="form-control" />
+                            <span asp-validation-for="SupplierReturnName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row supplier-return-fields">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrProcExpectedDate" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Product Expected Return Date"> <strong>Expected Date </strong> <span class="fw-bold text-danger"></span></label>
+                            <input asp-for="NcrProcExpectedDate" class="form-control" type="date" />
+                            <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="SupplierReturnAccount" class="control-label"><strong>Account # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request">(e.g. 946735)</small></label>
+                            <input asp-for="SupplierReturnAccount" class="form-control" />
+                            <span asp-validation-for="SupplierReturnAccount" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier has been Billed"> <strong>Supplier Billed</strong> <span class="fw-bold text-danger">*</span></label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierBilled" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierBilled" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier Credit is Expected"> <strong>Supplier Credit Expected </strong> <span class="fw-bold text-danger">*</span></label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcCreditExpected" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcCreditExpected" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Sales Return Process is Completed"> <strong>SAP Return Completed </strong> <span class="fw-bold text-danger">*</span></label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="true" checked />
+                                <label class="form-check-label">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="false" />
+                                <label class="form-check-label">No</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="NcrProcRejectedValue" class="control-label"><strong>Total Cost </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Total Cost of Rejected Product">(e.g. 11,675)</small></label>
+                                <input asp-for="NcrProcRejectedValue" class="form-control" />
+                                <span asp-validation-for="NcrProcRejectedValue" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label custom-file-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Choose a Photo to Upload"><strong>Upload Photos </strong></label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" name="photos" id="imageUpload" multiple="multiple" />
+                    </div>
+                    <div id="imagePreview"></div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NcrProcDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
+                    <input asp-for="NcrProcDefectVideo" class="form-control" />
+                    <span asp-validation-for="NcrProcDefectVideo" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group d-flex justify-content-end mt-2">
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
+                            <i class="bi bi-pencil"></i> Save as Draft
+                        </button>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary ms-4">
+                            <i class='bi-plus-square-dotted'></i> Save
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" id=test class="btn btn-warning ms-4">
+                            <i class='bi-box-arrow-in-down'></i> Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <!--New Draft functionality-->
+    <script>
+        $(document).ready(function () {
+            $("#saveDraftButton").click(function () {
+                // Show the message.
+                var confirmMessage = "This record will be saved as a draft if all the required fields are filled. \nAre you sure you want to continue?";
+                if (confirm(confirmMessage)) {
+                    //if is true, change the value of the parameter
+                    $("#isDraftInput").val("true");
+                    // Send the form
+                    $("#formProcurement").submit();
+                } else {
+                    return false;
+                }
+            });
+        });
+    </script>
+
+    <!-- Draft functionality using cookies-->
+    @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function saveDraft() {
+                document.getElementById("isDraftInput").value = "true";
+                var formData = new FormData(document.querySelector('#formProcurement'));
+                // for (var pair of formData.entries()) {
+                //     console.log(pair[0] + ', ' + pair[1]);
+                // }
+                $.ajax({
+                    url: '/NcrProcurement/Create',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+
+                            window.location.href = '/NcrProcurement/Index';
+                        } else {
+                            alert('Error saving the draft');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error saving the draft: ' + error);
+                    }
+                });
+            }
+            $('#saveDraftButton').click(saveDraft);
+        });
+    </script> *@
+
+    <script>
+        $(document).ready(function () {
+            function toggleSupplierReturnFields() {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                if (supplierReturnRequest === 'true') {
+                    $('.supplier-return-fields').css('max-height', '1000px');
+
+                    $('.supplier-return-fields [data-val="true"]').each(function () {
+                        $(this).attr('data-val', 'true');
+                    });
+                } else {
+                    $('.supplier-return-fields').css('max-height', '0');
+
+                    $('.supplier-return-fields [data-val="true"]').each(function () {
+                        $(this).attr('data-val', 'false');
+                    });
+                }
+            }
+
+            toggleSupplierReturnFields();
+
+            $('input[name="NcrProcSupplierReturnReq"]').change(function () {
+                toggleSupplierReturnFields();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            function toggleSupplierReturnFields() {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var supplierRMAField = $('#SupplierReturnMANum');
+                var carrierNameField = $('#SupplierReturnName');
+                var accountField = $('#SupplierReturnAccount');
+
+
+                if (supplierReturnRequest === 'true') {
+                    supplierRMAField.prop('required', true);
+                    carrierNameField.prop('required', true);
+                    accountField.prop('required', true);
+                } else {
+                    supplierRMAField.prop('required', false);
+                    carrierNameField.prop('required', false);
+                    accountField.prop('required', false);
+                }
+            }
+
+            // Function to validate the form on submit
+            $('#formProcurement').submit(function (event) {
+                var isValid = true;
+
+                
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+
+                $('.supplier-return-fields [required]').each(function () {
+                    if ($.trim($(this).val()) === '') {
+                        isValid = false;
+                        if ($(this).attr('id') === 'SupplierReturnMANum' && supplierReturnRequest === 'true') {
+                            $(this).next('.text-danger').text('Supplier RMA# is required.');
+                        } else if ($(this).attr('id') === 'SupplierReturnName' && supplierReturnRequest === 'true') {
+                            $(this).next('.text-danger').text('Carrier Name is required.');
+                        } else if ($(this).attr('id') === 'SupplierReturnAccount' && supplierReturnRequest === 'true') {
+                            $(this).next('.text-danger').text('Account # is required.');
+                        } else {
+
+                            $(this).next('.text-danger').text('');
+                        }
+                    }
+                });
+
+                if (!isValid) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                return isValid;
+            });
+
+            toggleSupplierReturnFields();
+
+            $('input[name="NcrProcSupplierReturnReq"]').change(function () {
+                toggleSupplierReturnFields();
+            });
+
+            $('#SupplierReturnMANum').blur(function () {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var supplierRMAField = $(this);
+                if (supplierReturnRequest === 'true' && $.trim(supplierRMAField.val()) === '') {
+                    supplierRMAField.next('.text-danger').text('Supplier RMA# is required.');
+                } else {
+                    supplierRMAField.next('.text-danger').text('');
+                }
+            });
+
+            $('#SupplierReturnName').blur(function () {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var carrierNameField = $(this);
+                if (supplierReturnRequest === 'true' && $.trim(carrierNameField.val()) === '') {
+                    carrierNameField.next('.text-danger').text('Carrier Name is required.');
+                } else {
+                    carrierNameField.next('.text-danger').text('');
+                }
+            });
+
+            $('#SupplierReturnAccount').blur(function () {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var accountField = $(this);
+                if (supplierReturnRequest === 'true' && $.trim(accountField.val()) === '') {
+                    accountField.next('.text-danger').text('Account # is required.');
+                } else {
+                    accountField.next('.text-danger').text('');
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+
+    @* Test button for live demo *@
+    <script>
+
+        function autoFillTestValues() {
+            var supplierRMAValue = "RT20062090";
+            var carrierNameValue = "Purolator";
+            var accountValue = "12345";
+            var rejectedValue = "10000";
+
+
+            $('#SupplierReturnMANum').val(supplierRMAValue);
+            $('#SupplierReturnName').val(carrierNameValue);
+            $('#SupplierReturnAccount').val(accountValue);
+            $('#NcrProcRejectedValue').val(rejectedValue);
+        }
+
+        $('#test').click(function () {
+            autoFillTestValues();
+        });
+    </script>
+
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

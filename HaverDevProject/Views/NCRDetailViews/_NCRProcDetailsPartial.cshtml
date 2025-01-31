@@ -1,0 +1,261 @@
+﻿@model HaverDevProject.Models.NcrProcurement
+
+<style>
+    .modal1 {
+        display: none;
+        position: fixed; 
+        z-index: 9999;  
+        padding-top: 15px;   
+        left: 0;
+        top: 0;
+        width: 100%;   
+        height: 100%;   
+        overflow: auto;   
+        background-color: rgb(0,0,0);   
+        background-color: rgba(0,0,0,0.9);   
+    }
+
+    .modal1-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;  
+    }
+
+    .close {
+        color: #fff;
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+</style>
+
+<div class="mt-2">
+            <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#procurementSection" aria-expanded="@ViewBag.IsNCRProcView.ToString().ToLower()" aria-controls="procurementSection">
+                Procurement <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="collapse @(ViewBag.IsNCRProcView? "show" : "")" id="procurementSection">
+                <div class="card">
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="two-cols-1">Supplier Return Request?</th>
+                                    <th class="two-cols">Dispose on Site</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="two-cols-1">
+                                @(Model.NcrProcSupplierReturnReq ? "Yes" : "No")
+                                    </td>
+                                    <td class="two-cols">
+                                        @(Model.NcrProcDisposedAllowed ? "Yes" : "No")
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (Model.NcrProcSupplierReturnReq == true)
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                Supplier Return Details
+                            </div>
+                            <div class="card-body pb-0 pt-0">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="four-cols">Supplier RMA#</th>
+                                            <th class="four-cols">Carrier Name</th>
+                                            <th class="four-cols">Expected Date</th>
+                                            <th class="four-cols">Account #</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="four-cols">@(Model.SupplierReturnMANum ?? "")</td>
+                                            <td class="four-cols">@(Model.SupplierReturnName ?? "")</td>
+                                            <td class="four-cols">@(Model.NcrProcExpectedDate?.ToString("yyyy-MM-dd") ?? "")</td>
+                                            <td class="four-cols">@(Model.SupplierReturnAccount ?? "")</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="four-cols">Supplier Billed?</th>
+                                    <th class="four-cols">Supplier Credit Expected?</th>
+                                    <th class="four-cols">Total Cost</th>
+                                    <th class="four-cols">SAP Return Completed?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+                                    <td class="four-cols">
+                                        @(Model.Ncr.NcrProcurement.NcrProcSupplierBilled ? "Yes" : "No")
+                                    </td>
+                                    <td class="four-cols">
+                                        @(Model.Ncr.NcrProcurement.NcrProcCreditExpected ? "Yes" : "No")
+                                    </td>
+                                    <td class="four-cols">
+                                        @Model.Ncr.NcrProcurement.NcrProcRejectedValue.ToString()
+                                    </td>
+                                    <td class="four-cols">
+                                        @(Model.Ncr.NcrProcurement.NcrProcSAPReturnCompleted ? "Yes" : "No")
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card">
+                        <div class="card-body pb-0">
+                            <table class="table m-0">
+                                <thead class="custom-light-bg">
+                                    <tr>
+                                        <th class="three-cols">Created By</th>
+                                        <th class="three-cols">Updated By</th>
+                                        <th class="three-cols">Created On</th>
+                                        <th class="three-cols">Updated On</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.CreatedBy, section = "proc" })</td>
+                                        <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.UpdatedBy, section = "proc" })</td>               
+                                        <td class="three-cols">@Model.NcrProcCreated.ToString("yyyy-MM-dd")</td>
+                                        <td class="three-cols">
+                                            @{
+                                                if (Model.UpdatedOn.HasValue)
+                                                {
+                                                    DateTime localUpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.UpdatedOn.Value, TimeZoneInfo.Local);
+                                                    @localUpdatedOn.ToString("yyyy-MM-dd HH:mm:ss")
+                                                }
+                                                else
+                                                {
+                                                    @("Not available")
+                                                }
+                                            }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @{
+                        bool hasImages = Model.ProcDefectPhotos != null && Model.ProcDefectPhotos.Any(p => p.ProcDefectPhotoContent != null);
+                        bool hasVideos = Model.NcrProcDefectVideo != null;
+                    }
+                    @if (hasImages || hasVideos)
+                    {
+                        <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfoProc" aria-expanded="false" aria-controls="additionalInfo">
+                            Additional Information <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="collapse" id="additionalInfoProc">
+                            @if (hasImages)
+                            {
+                                <div class="card-header">
+                                    Images
+                                </div>
+                                <div class="card-body pb-0">
+                                    <div class="row justify-content-center">
+                                        @{
+                                            if (Model.ProcDefectPhotos != null && Model.ProcDefectPhotos.Any())
+                                            {
+                                                foreach (var photo in Model.ProcDefectPhotos)
+                                                {
+                                                    if (photo.ProcDefectPhotoContent != null)
+                                                    {
+                                                        string imageBase64 = Convert.ToBase64String(photo.ProcDefectPhotoContent);
+                                                        string imageSrc = string.Format("data:" + photo.ProcDefectPhotoMimeType + ";base64,{0}", imageBase64);
+
+                                                        <div class="text-center pb-3 col-6">
+                                                            <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" onclick="openModal('@imageSrc')" />
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            @if (hasVideos)
+                            {
+                                <div class="card-header">
+                                    Videos
+                                </div>
+                                <div class="card-body">
+                                    @if (Model.NcrProcDefectVideo != null)
+                                    {
+                                        @foreach (var videoUrl in Model.NcrProcDefectVideo.Split(','))
+                                        {
+                                            <a href="@videoUrl" target="_blank">Video Link</a>
+                                            <br />
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+</div>
+<div id="imageModal" class="modal1">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img id="modalImage" class="modal1-content" />
+</div>
+
+<script>
+    function openModal(imageSrc) {
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("imageModal");
+        modal.style.display = "none";
+    }
+</script>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("imageModal");
+
+    // Get the image and close button
+    var modalImg = document.getElementById("modalImage");
+    var closeBtn = document.getElementsByClassName("close")[0]; 
+
+    // When the user clicks anywhere outside of the image, close the modal
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // Function to open the modal
+    function openModal(imageSrc) {
+        modal.style.display = "flex";
+        modalImg.src = imageSrc;
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = "none";
+    }
+</script>

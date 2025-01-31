@@ -1,0 +1,305 @@
+﻿@model HaverDevProject.ViewModels.NcrEngDTO
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<style>
+    .thumbnail {
+        max-width: 150px;
+        max-height: 150px;
+        margin: 5px;
+    }
+
+    img {
+        max-width: 150px;
+        max-height: 150px
+    }
+</style>
+
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Engineer</h1>
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (ViewBag.ncrDetails.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
+        }
+    </div>
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="formEng">
+        <input type="hidden" name="isDraft" value="false" id="isDraftInput" />
+        <div class="card border-2 mt-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Add to NCR</h2>
+                </div>
+                <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <strong>NCR No.</strong>
+                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
+                            <input asp-for="NcrNumber" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <strong>Date</strong>
+                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
+                            <input asp-for="NcrEngCompleteDate" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">                      
+                        <div class="form-group">
+                            <label asp-for="EngDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option"><strong>HBC Engineering </strong> (indicate disposition by selecting one of the following)  </span> <span class="fw-bold text-danger">*</span></label>
+                            <select asp-for="EngDispositionTypeId" class="form-control" asp-items="ViewBag.EngDispositionTypeId" id="DispositionSelect">
+                                <option value="">Select Disposition</option>
+                            </select>
+                            <span asp-validation-for="EngDispositionTypeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+
+                                <input class="form-check-input" asp-for="NcrEngCustomerNotification" />
+                                @* @Html.DisplayNameFor(model => model.NcrEngCustomerNotification) *@
+
+                                Check the box if customer requires notification of NCR (if checked, raise message to customer detailing issues)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <strong>Disposition</strong> (Sequence of work steps required when 'repair' or 'rework' indicated) <span class="fw-bold text-danger">*</span>
+                            @* <label asp-for="NcrEngDispositionDescription" class="control-label"></label> *@
+                            <textarea asp-for="NcrEngDispositionDescription" class="form-control" id="Description"></textarea>
+                            <span asp-validation-for="NcrEngDispositionDescription" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label custom-file-label"> <strong>Upload Photos </strong></label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" name="Photos" id="imageUpload" multiple="multiple" id="Picture" />
+                    </div>
+                    <div id="imagePreview"></div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NcrEngDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
+                    <input asp-for="NcrEngDefectVideo" class="form-control" id="Video"/>
+                    <span asp-validation-for="NcrEngDefectVideo" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="DrawingRequireUpdating" />
+                                @Html.DisplayNameFor(model => model.DrawingRequireUpdating)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="drawingConditional" class="row hidden">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                               <strong> <label asp-for="DrawingOriginalRevNumber" class="control-label"></label></strong>
+                                <input asp-for="DrawingOriginalRevNumber" class="form-control" />
+                                <span asp-validation-for="DrawingOriginalRevNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <strong> <label asp-for="DrawingUpdatedRevNumber" class="control-label"></label></strong>
+                                <input asp-for="DrawingUpdatedRevNumber" class="form-control" />
+                                <span asp-validation-for="DrawingUpdatedRevNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group">
+                            <strong>Revision Date</strong>
+                            <input asp-for="DrawingRevDate" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group d-flex justify-content-end mt-2">
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color ">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
+                            <i class="bi bi-pencil"></i> Save as Draft
+                        </button>
+                    </div>
+                    <div>
+                        <div>
+                            <button type="submit" class="btn btn-primary ms-4">
+                                <i class='bi-plus-square-dotted'></i> Save
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" id=test class="btn btn-warning ms-4">
+                            <i class='bi-box-arrow-in-down'></i> Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/refreshDDL.js"></script>
+    <!-- New Draft functionality-->
+    <script>
+        $(document).ready(function () {
+            $("#saveDraftButton").click(function () {
+                // Show the message.
+                var confirmMessage = "This record will be saved as a draft if all the required fields are filled. \nAre you sure you want to continue?";
+                if (confirm(confirmMessage)) {
+                    //if is true, change the value of the parameter
+                    $("#isDraftInput").val("true");
+                    // Send the form
+                    $("#formEng").submit();
+                } else {
+                    return false;
+                }
+            });
+        });
+    </script>
+    <!-- Draft functionality using cookies-->
+    @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function saveDraft() {
+                document.getElementById("isDraftInput").value = "true";
+                var formData = new FormData(document.querySelector('#formEng'));
+                $.ajax({
+                    url: '/NcrEng/Create',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+
+                            window.location.href = '/NcrEng/Index';
+                        } else {
+                            alert('Error saving the draft');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error saving the draft: ' + error);
+                    }
+                });
+            }
+            $('#saveDraftButton').click(saveDraft);
+        });
+    </script> *@
+
+    @* Hidden drawing section to show if DrawingRequireUpdating is selected *@
+    <script>
+        $(document).ready(function () {
+            $('#DrawingRequireUpdating').change(function () {
+                if (this.checked) {
+                    $('#drawingConditional').removeClass('hidden');
+                } else {
+                    $('#drawingConditional').addClass('hidden');
+                }
+            });
+        });
+    </script>
+
+    @* When Use As Is or Scrap is selected, Disposition Description will be read only with N/A text *@
+    <script>
+        const engDispositionSelect = document.getElementById('DispositionSelect');
+        const ncrDispositionDescription = document.getElementById('Description');
+        engDispositionSelect.addEventListener('change', function () {
+            const selectedValue = engDispositionSelect.value;
+            if (selectedValue == 1 || selectedValue == 4) {
+                ncrDispositionDescription.value = 'N/A';
+                ncrDispositionDescription.readOnly = true;
+
+            } else {
+                ncrDispositionDescription.value = '';
+                ncrDispositionDescription.readOnly = false;
+            }
+        });
+    </script>
+
+    @* Test button for live demo *@
+    <script>
+        const button = document.getElementById('test');
+        button.addEventListener('click', test);
+        function test() {
+            document.getElementById("DispositionSelect").value = 2;
+            document.getElementById("Description").value = 'Remove material to finish ID completely. (Max 9.3")';
+            document.getElementById("Video").value = "https://www.bing.ca";
+        }
+    </script>
+
+    @* Tooltips *@
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

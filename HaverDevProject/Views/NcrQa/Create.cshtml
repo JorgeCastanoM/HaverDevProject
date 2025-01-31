@@ -1,0 +1,523 @@
+﻿@model HaverDevProject.ViewModels.NcrQaDTO
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<style>
+    .thumbnail {
+        max-width: 150px;
+        max-height: 150px;
+        margin: 5px;
+    }
+
+    img {
+        max-width: 150px;
+        max-height: 150px
+    }
+</style>
+
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Quality Representative</h1>
+</div>
+
+<div class="col-md-8 col-10 mx-auto"> 
+    
+    <partial name="_addItemModal" />
+    <partial name="_addSupplierModal" />
+    <partial name="_addDefectModal" />   
+    
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="formQa">
+        <input type="hidden" asp-for="ParentId" value="@Context.Request.Query["parentNcrId"]" />
+        <input type="hidden" name="isDraft" value="false" id="isDraftInput"/>
+        <div class="card border-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Create NCR</h2>
+                </div>
+                <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">                    
+                    <div class="col-6">                        
+                        <div class="form-group">
+                            <label asp-for="NcrNumber" class="control-label fw-bold"></label>
+                            <input asp-for="NcrNumber" class="form-control" readonly/>
+                            <span asp-validation-for="NcrNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQacreationDate" class="control-label fw-bold"></label>
+                            <input asp-for="NcrQacreationDate" class="form-control" readonly/>
+                            <span asp-validation-for="NcrQacreationDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">       
+                    <div class="form-group">
+                        <label class="pb-3">
+                            <strong>Identify Process Applicable </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Supplier or Rec-Insp)</small> 
+                            <span class="fw-bold text-danger">*</span></label>
+                        <div class="text-center">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrQaProcessApplicable" value="true" checked />
+                                <label class="form-check-label">Supplier or Rec-Insp</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrQaProcessApplicable" value="false" />
+                                <label class="form-check-label">WIP (Production Order)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">                
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQaOrderNumber" class="control-label">
+                                <strong>PO or Prod. No. </strong>
+                                <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a valid value">(e.g. 4500730930)</small>
+                                <span class="fw-bold text-danger">*</span></label>
+                            <input asp-for="NcrQaOrderNumber" class="form-control" type="number" step="1" id="OrderNumber"/>
+                            <span asp-validation-for="NcrQaOrderNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQaSalesOrder" class="control-label">
+                                <strong>Sales Order No. </strong>
+                                <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a valid value">(e.g. Stock)</small>
+                                <span class="fw-bold text-danger">*</span></label>
+                            <input asp-for="NcrQaSalesOrder" class="form-control" id="SalesOrder"/>
+                            <span asp-validation-for="NcrQaSalesOrder" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">               
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQaQuanReceived" class="control-label">
+                                <strong>Quantity Received </strong>
+                                <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a numeric value">(e.g. 150)</small>
+                                <span class="fw-bold text-danger">*</span></label>
+                            <input asp-for="NcrQaQuanReceived" class="form-control" id="Received"/>
+                            <span asp-validation-for="NcrQaQuanReceived" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQaQuanDefective" class="control-label">
+                                <strong>Quantity Defective</strong> 
+                                <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a numeric value">(e.g. 25)</small>
+                                <span class="fw-bold text-danger">*</span></label>
+                            <input asp-for="NcrQaQuanDefective" class="form-control" id="Defective"/>
+                            <span asp-validation-for="NcrQaQuanDefective" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">   
+                    <div class="form-group">
+                        <label class="control-label">
+                            <strong>Supplier </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
+                        <div class="input-group mb-1" id="dropautocomplete">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip-supplier="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select class="form-control Supplierddlist" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
+                                <option value="">Select Supplier</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="SupplierId" class="text-danger"></span>
+                    </div>     
+                    <div class="form-group">
+                        <label asp-for="ItemId" class="control-label">
+                            <strong>Item </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
+                        <div class="input-group mb-1" id="dropautocompleteforItem">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddItem" data-bs-toggle="modal" data-bs-target="#addItemModal" type="button" data-tooltip-item="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select asp-for="ItemId" id="ItemId" class="form-control Itemddlist" name="ItemId" asp-items="ViewBag.ItemId" id="Item">
+                                <option value="">Select Item</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="ItemId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DefectId" class="control-label">
+                            <strong>Defect </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small> 
+                            <span class="fw-bold text-danger">*</span></label>                       
+                            <select asp-for="DefectId" class="form-control Defectddlist" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId" id="Defect">
+                                <option value="">Select Defect</option>
+                            </select>                        
+                        <span asp-validation-for="DefectId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NcrQaDescriptionOfDefect" class="control-label">
+                            <strong>Description of Defect </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter the required description">(e.g. Dimensions outside of control parameters.)</small> 
+                            <span class="fw-bold text-danger">*</span></label>
+                        <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control" id="Description"></textarea>
+                        <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
+                    </div>                    
+                    <div class="form-group">
+                        <label class="control-label custom-file-label"><strong>Upload Photos</strong></label>
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="Photos" id="imageUpload" multiple="multiple" />
+                        </div>                       
+                        <div id="imagePreview"></div>
+                    </div>  
+                    <div class="form-group">
+                        <label asp-for="NcrQaDefectVideo" class="control-label">
+                            <strong>Video Links </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small>
+                        </label>
+                        <input asp-for="NcrQaDefectVideo" class="form-control" id="Video"/>
+                        <span asp-validation-for="NcrQaDefectVideo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">                                           
+                        <div class="form-group">
+                            <label class="pb-3"><strong>Item marked Nonconforming</strong> <span class="fw-bold text-danger">*</span></label>
+                            <div class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrQaItemMarNonConforming" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrQaItemMarNonConforming" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3"><strong>Engineer Disposition Required? </strong><span class="fw-bold text-danger">*</span></label>
+                            <div class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrQaEngDispositionRequired" value="true" checked/>
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrQaEngDispositionRequired" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <p>
+                        Completed NCR to be forwarded to HBC Purchasing Manager complete with any relevant documents attached (pictures, actual measurements, material certs, etc.)
+                    </p> 
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group d-flex justify-content-end mt-2">
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color ">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR Log
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
+                            <i class="bi bi-pencil"></i> Save as Draft
+                        </button>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary ms-4">
+                            <i class='bi-plus-square-dotted'></i> Create
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" id=test class="btn btn-warning ms-4">
+                            <i class='bi-box-arrow-in-down'></i> Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <!-- Show Loading Message" -->
+    <div id="loadingOverlay">
+        <div id="loadingSpinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    
+
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="engineerDispositionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Engineer Disposition Required</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                 <p><strong>Warning:</strong> Engineer Disposition is not required. Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">                
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/refreshDDL.js"></script>
+    <script src="~/js/saveDraft.js"></script>    
+
+    <!-- Draft functionality using cookies-->
+    @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> *@
+    
+   @*  <script>
+        $(document).ready(function () {
+            $('#saveDraftButton').click(saveDraft);            
+        });
+    </script> *@
+
+    <script>
+        $(document).ready(function () {            
+            $("#saveDraftButton").click(function () {
+                // Show the message.
+                var confirmMessage = "This record will be saved as a draft if all the required fields are filled. \nAre you sure you want to continue?";
+                if (confirm(confirmMessage)) {
+                    //if is true, change the value of the parameter  
+                    $("#isDraftInput").val("true");
+                    // Send the form
+                    $("#formQa").submit();
+                } else {                    
+                    return false; 
+                }
+            });
+        });
+    </script>  
+
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+    
+    <!-- Supplier Autocomplete Field-->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var $select2 = $('.Supplierddlist').select2();
+            var $select2 = $('.Itemddlist').select2();
+            var $select2 = $('.Defectddlist').select2();     
+        });
+    </script>  
+        
+    <script>
+    function showEngineerDispositionModal() {
+        $('#engineerDispositionModal').modal('show');
+    }
+    function hideEngineerDispositionModal() {
+        $('#engineerDispositionModal').modal('hide');
+    }      
+    $('input[name="NcrQaEngDispositionRequired"]').change(function () {
+        var engineerDispositionRequired = $(this).val();
+        if (engineerDispositionRequired === "false") {
+            showEngineerDispositionModal();
+        } else {
+            hideEngineerDispositionModal();
+        }
+    });
+</script>
+<!--Script for tooltips-->
+<script>
+    $(document).ready(function () {
+        initializeTooltip('Add New Supplier', '[data-tooltip-supplier="true"]');
+        initializeTooltip('Add New Item', '[data-tooltip-item="true"]');        
+    });
+    function initializeTooltip(title, selector) {        
+        $(selector).tooltip({
+            title: title
+        });
+    }
+</script>
+<!--Script Add New Supplier button-->
+<script type="text/javascript">
+        $('#submitSupplierCreate').click(function (event) {
+            event.preventDefault();
+            ClearErrorsSupplier();
+            var form = $('#createSupplierForm');
+            if (form.valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function () {
+                        $('#addSupplierModal').modal('hide');
+                    },
+                    error: function (xhr) { //Note: xhr is the XMLHttpRequest
+                        var errorMessages = [];
+                        switch (xhr.status) {
+                            case 401:
+                                errorMessages.push("You must be logged in first.");
+                                break;
+                            case 403:
+                                errorMessages.push("You are not authorized for this action.");
+                                break;
+                            default:
+                                //Messages coming from the Model State Errors
+                                //We split on the | delimeter and the .slice removes the last one
+                                errorMessages = xhr.responseText.split("|").slice(0, -1);
+                        }
+                        //This checks if there are any elements with some content
+                        //and if not then it provides a default feedback message.
+                        if (!errorMessages.some((str) => str !== "")) {
+                            errorMessages.push("Error: Unable to complete operation");
+                        }
+                        //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
+                        var ul = document.getElementById("ErrorListSupplier");
+                        for (var i = 0; i < errorMessages.length; i++) {
+                            var errorMessage = errorMessages[i];
+                            var li = document.createElement("li");
+                            li.innerHTML = errorMessage;
+                            ul.appendChild(li);
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+        $('#addSupplierModal').on('hide.bs.modal', function () {
+            document.getElementById("createSupplierForm").reset();//to clear the data in the popup form
+            ClearErrorsSupplier();
+            var selectedOption = $('#SupplierId').val();//Return to the current selected value
+            refreshDDL('SupplierId', '/NcrQa/GetSuppliers/' + selectedOption, false, null, true, 'Select Supplier', true);
+        });
+        function ClearErrorsSupplier() {
+            //Empty out the list of validation errors if there are any
+            var ul = document.getElementById("ErrorListSupplier");
+            while (ul.firstChild) {
+                ul.removeChild(ul.firstChild);
+            }
+        }
+    </script>
+<!--Script for Add New Item button-->
+<script type="text/javascript">
+        $('#submitItemCreate').click(function (event) {
+            event.preventDefault();
+            ClearErrors();
+            var form = $('#createItemForm');
+            if (form.valid()) 
+            {                
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function () {
+                        $('#addItemModal').modal('hide');
+                    },
+                    error: function (xhr) { //Note: xhr is the XMLHttpRequest
+                        var errorMessages = [];
+                        switch (xhr.status) {
+                            case 401:
+                                errorMessages.push("You must be logged in first.");
+                                break;
+                            case 403:
+                                errorMessages.push("You are not authorized for this action.");
+                                break;
+                            default:
+                                //Messages coming from the Model State Errors
+                                //We split on the | delimeter and the .slice removes the last one
+                                errorMessages = xhr.responseText.split("|").slice(0, -1);
+                        }
+                        //This checks if there are any elements with some content
+                        //and if not then it provides a default feedback message.
+                        if (!errorMessages.some((str) => str !== "")) {
+                            errorMessages.push("Error: Unable to complete operation");
+                        }
+                        //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
+                        var ul = document.getElementById("ErrorListItem");
+                        for (var i = 0; i < errorMessages.length; i++) {
+                            var errorMessage = errorMessages[i];
+                            var li = document.createElement("li");
+                            li.innerHTML = errorMessage;
+                            ul.appendChild(li);
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+        $('#addItemModal').on('hide.bs.modal', function () {
+            document.getElementById("createItemForm").reset();//to clear the data in the popup form
+            ClearErrors();
+            var selectedOption = $('#ItemId').val();//Return to the current selected value            
+            var URLItem = "/NcrQa/GetItems/";
+            refreshDDL('ItemId', URLItem, true, 'No items related with the supplier selected', true, 'Select Item', true);
+        });
+        function ClearErrors() {
+            //Empty out the list of validation errors if there are any
+            var ul = document.getElementById("ErrorListItem");
+            while (ul.firstChild) {
+                ul.removeChild(ul.firstChild);
+            }
+        }
+    </script>    
+    @* Test button for live demo *@
+    <script>
+        const button = document.getElementById('test');
+        button.addEventListener('click', test);
+        function test() {
+            document.getElementById("OrderNumber").value = 4500745599;
+            document.getElementById("SalesOrder").value = 10401235;
+            document.getElementById("Received").value = 16;
+            document.getElementById("Defective").value = 6;            
+            document.getElementById("Description").value = 'See photos. Packing slip and package labels do not match the actual dimensions of the washers.';
+            document.getElementById("Video").value = "https://haverniagara.com/, https://www.google.ca";
+        }
+    </script>
+
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

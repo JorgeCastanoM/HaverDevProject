@@ -1,0 +1,456 @@
+@model HaverDevProject.ViewModels.NcrOperationDTO
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<style>
+    .thumbnail {
+        max-width: 150px;
+        max-height: 150px;
+        margin: 5px;
+    }
+
+    img {
+        max-width: 150px;
+        max-height: 150px
+    }
+</style>
+
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Operations</h1>
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (ViewBag.ncrDetails.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
+        }
+        else
+        {
+            <p>NCR Qa is null</p>
+        }
+
+        @if (ViewBag.ncrDetails.NcrEng != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", (NcrEng)ViewBag.ncrDetails.NcrEng)
+        }
+
+        else
+        {
+            <p>NCR Qa is null</p>
+        }
+    </div>
+    <form asp-action="Edit" method="post" enctype="multipart/form-data" id="formOp">
+        <input type="hidden" asp-for="NcrOpId" />
+        <input type="hidden" asp-for="NcrId" />
+        <input type="hidden" name="isDraft" value="false" id="isDraftInput" />
+        <div class="card border-2 mt-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Edit NCR</h2>
+                </div>
+                <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrNumber" class="control-label"><b>NCR No.</b></label>
+                            <input asp-for="NcrNumber" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <b>Date</b>
+                            <input asp-for="NcrOpCompleteDate" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="OpDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Indicate disposition by selecting one of the options in the dropdown list"><b>Operations Preliminary Decision</b></span> <span class="fw-bold text-danger">*</span></label>
+                            <select asp-for="OpDispositionTypeId" class="form-control" asp-items="ViewBag.OpDispositionTypeId">
+                                <option value="">Select Preliminary Decision</option>
+                            </select>
+                            <span asp-validation-for="OpDispositionTypeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection"><b>Description</b></span> <span class="fw-bold text-danger"> *</span></label>
+                            <textarea asp-for="NcrPurchasingDescription" class="form-control"></textarea>
+                            <span asp-validation-for="NcrPurchasingDescription" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Was a CAR raised?</b></span><span class="fw-bold text-danger"> *</span></label>
+                        <div class="text-left">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="Car" value="true" id="car-raised-yes" />
+                                <label class="form-check-label" data-bs-toggle="collapse" data-bs-target="#car-number-input">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="Car" value="false" id="car-raised-no" />
+                                <label class="form-check-label">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row collapse" id="car-number-input">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="CarNumber" class="control-label"><b>If "Yes" indicate CAR # </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter the Car Number">(e.g. CAR 2024-01) </small><span class="fw-bold text-danger">*</span></label>
+                            <input asp-for="CarNumber" class="form-control" placeholder="Car Number" />
+                            <span asp-validation-for="CarNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Follow-Up Required?</b></span><span class="fw-bold text-danger"> *</span></label>
+                            <div class="text-left">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="true" id="follow-no" />
+                                    <label class="form-check-label" data-bs-toggle="collapse" data-bs-target="#Follow-input">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="false" id="follow-no" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row collapse" id="Follow-input">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="FollowUpTypeId" class="control-label"><b>If "Yes" indicate type & expected date </b><span class="fw-bold text-danger">*</span></label>
+                                <select asp-for="FollowUpTypeId" class="form-control" asp-items="ViewBag.FollowUpTypeId">
+                                    <option value="">Select Follow Type</option>
+                                </select>
+                                <span asp-validation-for="FollowUpTypeId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label> </label>
+                                <input asp-for="ExpectedDate" class="form-control date-input" value="@Model.ExpectedDate?.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="ExpectedDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"><strong>Current Photos:</strong></label>
+                    <div class="ml-md-3">
+                        <div id="photoListContainer">
+                            @if (Model.OpDefectPhotos.Any())
+                            {
+                                int fileCount = Model.OpDefectPhotos.Count;
+                                <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrOpId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrOpId)">
+                                    <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
+                                </a>
+                                <div class="collapse" id="collapsePhotos@(Model.NcrOpId)">
+                                    <div class="row justify-content-center">
+                                        @foreach (var d in Model.OpDefectPhotos)
+                                        {
+                                            <div id="photo-@d.OpDefectPhotoId" class="d-flex align-items-center mb-2">
+                                                @if (d.OpDefectPhotoContent != null)
+                                                {
+                                                    string imageBase64 = Convert.ToBase64String(d.OpDefectPhotoContent);
+                                                    string imageSrc = string.Format("data:" + d.OpDefectPhotoMimeType + ";base64,{0}", imageBase64);
+
+                                                    <img src="@imageSrc" alt="Photo of @d.FileName" class="img-fluid rounded" />
+                                                }
+                                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.OpDefectPhotoId)"><i class="bi bi-trash"></i></button>
+
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <p id="noPhotosMessage">No photos to display.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label custom-file-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Upload photos"><b>Upload Photos</b></span></label>
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="Photos" id="imageUpload" multiple="multiple" />
+                        </div>
+                        <div id="imagePreview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NcrOperationVideo" class="control-label"><b>Video Links </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
+                        <input asp-for="NcrOperationVideo" class="form-control" />
+                        <span asp-validation-for="NcrOperationVideo" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group d-flex justify-content-end mt-2">
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
+                        </button>
+                    </div>
+                    @if (Model.NcrOpStatusFlag)
+                    {
+                        <div>
+                            <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
+                                <i class="bi bi-pencil"></i> Save as Draft
+                            </button>
+                        </div>
+                    }
+                    <div>
+                        <button type="submit" class="btn btn-primary ms-4">
+                            <i class="bi bi-floppy"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+    <!--Script for draft-->
+    <script>
+        $(document).ready(function () {
+            $("#saveDraftButton").click(function () {
+                // Show the message.
+                var confirmMessage = "This record will be saved as a draft if all the required fields are filled. \nAre you sure you want to continue?";
+                if (confirm(confirmMessage)) {
+                    //if is true, change the value of the parameter
+                    $("#isDraftInput").val("true");
+                    // Send the form
+                    $("#formOp").submit();
+                } else {
+                    return false;
+                }
+            });
+        });
+    </script>
+
+
+    @* Validation CAR *@
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on Car value
+            function toggleCarFields() {
+                var carValue = $('input[name="Car"]:checked').val();
+                var carNumberField = $('#CarNumber');
+
+                // Check the value of Car and toggle the required and disabled attributes accordingly
+                if (carValue === 'true') {
+                    // Set required attribute and enable the input
+                    carNumberField.prop('required', true);
+                    carNumberField.prop('disabled', false);
+                } else {
+                    // Remove required attribute and disable the input
+                    carNumberField.prop('required', false);
+                    carNumberField.prop('disabled', true);
+                }
+            }
+
+            // Call the function on page load
+            toggleCarFields();
+
+            // Bind the function to the change event of the Car radio buttons
+            $('input[name="Car"]').change(function () {
+                toggleCarFields();
+            });
+        });
+    </script>
+    @* Validation FollowUp *@
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on FollowUp value
+            function toggleFollowUpFields() {
+                var followUpValue = $('input[name="FollowUp"]:checked').val();
+                var followUpTypeField = $('#FollowUpTypeId');
+                var expectedDateField = $('#ExpectedDate');
+
+                // Check the value of FollowUp and toggle the required attribute accordingly
+                if (followUpValue === 'true') {
+                    // Set required attribute
+                    followUpTypeField.prop('required', true);
+                    expectedDateField.prop('required', true);
+                    followUpTypeField.prop('disabled', false);
+                    expectedDateField.prop('disabled', false);
+                } else {
+                    // Remove required attribute
+                    followUpTypeField.prop('required', false);
+                    expectedDateField.prop('required', false);
+                    followUpTypeField.prop('disabled', true);
+                    expectedDateField.prop('disabled', true);
+                }
+            }
+
+            // Call the function on page load
+            toggleFollowUpFields();
+
+            // Bind the function to the change event of the FollowUp radio buttons
+            $('input[name="FollowUp"]').change(function () {
+                toggleFollowUpFields();
+            });
+        });
+    </script>
+    
+
+
+    @* Show and hide CAR *@
+    <script>
+        // Function to toggle visibility when radio buttons change
+        function toggleCarNumberInput() {
+            const carNumberInput = document.getElementById("car-number-input");
+            const carRaisedRadios = document.querySelectorAll('input[name="Car"]');
+
+            carRaisedRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === "true") {
+                        carNumberInput.style.display = "block";
+                    } else {
+                        carNumberInput.style.display = "none";
+                    }
+                });
+            });
+        }
+
+        // Hide car-number-input on page load
+        document.getElementById("car-number-input").style.display = "none";
+
+        // Call the function when the document is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleCarNumberInput();
+
+            // Trigger change event for the selected radio button on page load (if any)
+            const checkedRadio = document.querySelector('input[name="Car"]:checked');
+            if (checkedRadio) {
+                checkedRadio.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+
+    @* Show and hide FollowUp *@
+    <script>
+        // Function to toggle visibility when radio buttons change
+        function toggleFollowUpInput() {
+            const followInput = document.getElementById("Follow-input");
+            const followRadios = document.querySelectorAll('input[name="FollowUp"]');
+
+            followRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === "true") {
+                        followInput.style.display = "block";
+                    } else {
+                        followInput.style.display = "none";
+                    }
+                });
+            });
+        }
+
+        // Show Follow-input on page load
+        document.getElementById("Follow-input").style.display = "block";
+
+        // Call the function when the document is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleFollowUpInput();
+
+            // Trigger change event for the selected radio button on page load (if any)
+            const checkedRadio = document.querySelector('input[name="FollowUp"]:checked');
+            if (checkedRadio) {
+                checkedRadio.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+
+    @* Photo delete *@
+    <script>
+        function deletePhoto(photoId) {
+            if (!confirm("Are you sure you want to delete this photo?")) return;
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "NcrOperation")',
+                data: { photoId: photoId },
+                success: function (response) {
+                    if (response.success) {
+                        $("#photo-" + photoId).remove();
+
+                        var currentCount = parseInt($("#photoCounter").text());
+                        var newCount = currentCount - 1;
+
+                        if (newCount > 0) {
+                            $("#photoCounter").text(newCount);
+                        } else {
+                            $("#photoListContainer").html('<p>No photos to display.</p>');
+                        }
+                        alert("Photo deleted sucessfully!");
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        }
+    </script>
+
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

@@ -1,0 +1,22 @@
+﻿@model HaverDevProject.Models.Defect
+
+<form asp-controller="Defects" asp-action="Create" id="createDefectForm">
+    <div class="text-danger validation-summary-errors"><ul id="ErrorListDefect"></ul></div>
+    <div class="row">
+        <div class="col-md-12">       
+            <div class="form-group">
+                <label asp-for="DefectName" class="control-label">
+                    <strong>Defect Type</strong> 
+                    <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Defect Type">(e.g. Loose wires)</small> 
+                    <span class="fw-bold text-danger">*</span></label>
+                <input asp-for="DefectName" class="form-control" placeholder="Defect Type" />
+                <span asp-validation-for="DefectName" class="text-danger"></span>
+            </div>
+            <div class="form-group text-end">
+                <input type="submit" id="submitDefectCreate" value="Create" class="btn btn-primary" />
+            </div>        
+        </div>
+    </div>
+</form>
+
+

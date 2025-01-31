@@ -1,0 +1,431 @@
+@model HaverDevProject.ViewModels.NcrOperationDTO
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<style>
+    .thumbnail {
+        max-width: 150px;
+        max-height: 150px;
+        margin: 5px;
+    }
+
+    img {
+        max-width: 150px;
+        max-height: 150px
+    }
+</style>
+
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Operations</h1>
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (ViewBag.ncrDetails.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
+        }
+
+        @if (ViewBag.ncrDetails.NcrEng != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", (NcrEng)ViewBag.ncrDetails.NcrEng)
+        }
+    </div>
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="formOper">
+        <input type="hidden" name="isDraft" value="false" id="isDraftInput" />
+        <div class="card border-2 mt-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Add to NCR</h2>
+                </div>
+                <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrNumber" class="control-label"><b>NCR No.</b></label>
+                            <input asp-for="NcrNumber" class="form-control" id="ncrNumber" readonly />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <b>Date</b>
+                            <input asp-for="NcrOpCreationDate" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="OpDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Indicate disposition by selecting one of the options in the dropdown list"><b>Operations Preliminary Decision</b></span> <span class="fw-bold text-danger">*</span></label>
+                            <select asp-for="OpDispositionTypeId" class="form-control" asp-items="ViewBag.OpDispositionTypeId" id="Decision">
+                                <option value="">Select Preliminary Decision</option>
+                            </select>
+                            <span asp-validation-for="OpDispositionTypeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection"><b>Description</b></span> <span class="fw-bold text-danger"> *</span></label>
+                    <textarea asp-for="NcrPurchasingDescription" class="form-control" id="Description"></textarea>
+                    <span asp-validation-for="NcrPurchasingDescription" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Was a CAR raised?</b><span class="fw-bold text-danger"> *</span></span></label>
+                        <div class="text-left">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="Car" value="true" id="car-raised-yes" />
+                                <label class="form-check-label" data-bs-toggle="collapse" data-bs-target="#car-number-input">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="Car" value="false" checked id="car-raised-no" />
+                                <label class="form-check-label">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row collapse" id="car-number-input">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="CarNumber" class="control-label"><b>If "Yes" indicate CAR # </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter the Car Number">(e.g. CAR 2024-01) </small><span class="fw-bold text-danger">*</span></label>
+                            <input asp-for="CarNumber" class="form-control" placeholder="Car Number"/>
+                            <span asp-validation-for="CarNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Follow-Up Required? </b></span><span class="fw-bold text-danger">*</span></label>
+
+                            <div class="text-left">
+                                <div>
+                                    <span asp-validation-for="FollowUp" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="text-left">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="true" id="follow-no" />
+                                    <label class="form-check-label" data-bs-toggle="collapse" data-bs-target="#Follow-input">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="false" checked id="follow-no" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row collapse" id="Follow-input">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="FollowUpTypeId" class="control-label"><b>If "Yes" indicate type & expected date </b><span class="fw-bold text-danger">*</span></label>
+                                <select asp-for="FollowUpTypeId" class="form-control" asp-items="ViewBag.FollowUpTypeId">
+                                    <option value="">Select Follow Type</option>
+                                </select>
+                                <span asp-validation-for="FollowUpTypeId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label> </label>
+                                <input asp-for="ExpectedDate" class="form-control date-input" value="@Model.ExpectedDate?.ToString("yyyy-MM-dd")" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <span asp-validation-for="ExpectedDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label custom-file-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Upload photos"><b>Upload Photos</b></span></label>
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="Photos" id="imageUpload" multiple="multiple" />
+                        </div>
+                        <div id="imagePreview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NcrOperationVideo" class="control-label"><b>Video Links </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
+                        <input asp-for="NcrOperationVideo" class="form-control" id="Video" />
+                        <span asp-validation-for="NcrOperationVideo" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group d-flex justify-content-end mt-2">
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
+                            <i class="bi bi-pencil"></i> Save as Draft
+                        </button>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary ms-4">
+                            <i class='bi-plus-square-dotted'></i> Save
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" id=test class="btn btn-warning ms-4">
+                            <i class='bi-box-arrow-in-down'></i> Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+    <!-- New Draft functionality-->
+    <script>
+        $(document).ready(function () {
+            $("#saveDraftButton").click(function () {
+                // Show the message.
+                var confirmMessage = "This record will be saved as a draft if all the required fields are filled. \nAre you sure you want to continue?";
+                if (confirm(confirmMessage)) {
+                    //if is true, change the value of the parameter
+                    $("#isDraftInput").val("true");
+                    // Send the form
+                    $("#formOper").submit();
+                } else {
+                    return false;
+                }
+            });
+        });
+    </script>
+    <!-- Draft functionality using cookies-->
+    @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function saveDraft() {
+                document.getElementById("isDraftInput").value = "true";
+                var formData = new FormData(document.querySelector('#formOper'));
+                // for (var pair of formData.entries()) {
+                //     console.log(pair[0] + ', ' + pair[1]);
+                // }
+                $.ajax({
+                    url: '/NcrOperation/Create',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+
+                            window.location.href = '/NcrOperation/Index';
+                        } else {
+                            alert('Error saving the draft');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error saving the draft: ' + error);
+                    }
+                });
+            }
+            $('#saveDraftButton').click(saveDraft);
+        });
+    </script> *@
+
+    @*     <script>
+        $(document).ready(function () {
+            $('input[name="Car"]').change(function () {
+                var carRaised = $(this).val();
+                var carNumberField = $('input[name="CarNumber"]');
+
+                if (carRaised === "true") {
+                    carNumberField.prop('disabled', false);
+                    carNumberField.val('');
+                } else {
+                    carNumberField.prop('disabled', true);
+                    carNumberField.val('');
+                }
+            });
+        });
+    </script> *@
+
+    <script>
+        function toggleFollowUpFields() {
+            var followUpValue = $('input[name="FollowUp"]:checked').val();
+            var followUpFields = $('#Follow-input');
+            var followUpTypeIdField = followUpFields.find('select[name="FollowUpTypeId"]');
+            var expectedDateField = followUpFields.find('input[name="ExpectedDate"]');
+
+            if (followUpValue === 'true') {
+                // Si FollowUp es true, establecer la fecha actual en ExpectedDate
+                expectedDateField.val(new Date().toISOString().split('T')[0]);
+            } else {
+                // Si FollowUp es false, borrar valores
+                followUpTypeIdField.val('');
+                expectedDateField.val('');
+            }
+        }
+
+        // Llamar a la función en la carga de la página
+        toggleFollowUpFields();
+
+        // Enlazar la función al evento de cambio de radio buttons de FollowUp
+        $('input[name="FollowUp"]').change(function () {
+            toggleFollowUpFields();
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on Car value
+            function toggleCarFields() {
+                var carValue = $('input[name="Car"]:checked').val();
+                var carNumberField = $('#CarNumber');
+
+                // Check the value of Car and toggle the required and disabled attributes accordingly
+                if (carValue === 'true') {
+                    // Set required attribute and enable the input
+                    carNumberField.prop('required', true);
+                    carNumberField.prop('disabled', false);
+                } else {
+                    // Remove required attribute and disable the input
+                    carNumberField.prop('required', false);
+                    carNumberField.prop('disabled', true);
+                }
+            }
+
+            // Call the function on page load
+            toggleCarFields();
+
+            // Bind the function to the change event of the Car radio buttons
+            $('input[name="Car"]').change(function () {
+                toggleCarFields();
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on FollowUp value
+            function toggleFollowUpFields() {
+                var followUpValue = $('input[name="FollowUp"]:checked').val();
+                var followUpTypeField = $('#FollowUpTypeId');
+                var expectedDateField = $('#ExpectedDate');
+
+                // Check the value of FollowUp and toggle the required attribute accordingly
+                if (followUpValue === 'true') {
+                    // Set required attribute
+                    followUpTypeField.prop('required', true);
+                    expectedDateField.prop('required', true);
+                } else {
+                    // Remove required attribute
+                    followUpTypeField.prop('required', false);
+                    expectedDateField.prop('required', false);
+                }
+            }
+
+            // Call the function on page load
+            toggleFollowUpFields();
+
+            // Bind the function to the change event of the FollowUp radio buttons
+            $('input[name="FollowUp"]').change(function () {
+                toggleFollowUpFields();
+            });
+        });
+    </script>
+
+
+    <script>
+        document.getElementById("car-number-input").style.display = "none";
+
+        // Toggle visibility when radio buttons change
+        const carRaisedRadios = document.querySelectorAll('input[name="Car"]');
+        carRaisedRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const carNumberInput = document.getElementById("car-number-input");
+                if (radio.value === "true") {
+                    carNumberInput.style.display = "block";
+                } else {
+                    carNumberInput.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        document.getElementById("Follow-input").style.display = "none";
+
+        // Toggle visibility when radio buttons change
+        const followRadios = document.querySelectorAll('input[name="FollowUp"]');
+        followRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const followInput = document.getElementById("Follow-input");
+                if (radio.value === "true") {
+                    followInput.style.display = "block";
+                } else {
+                    followInput.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <script>
+        const button = document.getElementById('test');
+        button.addEventListener('click', test);
+        function test() {
+            const ncrNumber = document.getElementById('ncrNumber').value;
+            document.getElementById("Decision").value = 3;
+            document.getElementById("Description").value = "Replacement required";
+            document.getElementById("Video").value = "https://www.google.ca";
+        }
+    </script>
+
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

@@ -1,0 +1,63 @@
+﻿@model HaverDevProject.Models.Item
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<div class="col-md-6 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Item</h1>
+</div>
+<div class="col-md-6 col-10 mx-auto">
+    <form asp-action="Edit">
+        <div class="card border-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Edit Item</h2>
+                </div>
+                <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="ItemId" />
+            </div>
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">
+                    <div class="form-group">
+                        <label asp-for="ItemNumber" class="control-label">SAP No. <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="SAP No. that identifies the Item">(e.g. 207956254)</small> <span class="fw-bold text-danger">*</span></label>
+                        <input asp-for="ItemNumber" class="form-control" placeholder="SAP No." />
+                        <span asp-validation-for="ItemNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ItemName" class="control-label">Name / Description <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Name / Description">(e.g. Screw 1/4" .120)</small> <span class="fw-bold text-danger">*</span></label>
+                        <input asp-for="ItemName" class="form-control" placeholder="Name / Description" />
+                        <span asp-validation-for="ItemName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group d-flex justify-content-end mt-2">                    
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                        </button>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary ms-4">
+                            <i class="bi bi-floppy"></i> Save
+                        </button>
+                    </div>           
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+}

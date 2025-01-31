@@ -1,0 +1,26 @@
+﻿@model HaverDevProject.Models.EngDispositionType
+
+<partial name="_ViewHeading" />
+
+<div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-1">
+            Disposition
+        </dt>
+        <dd class="col-sm-11">
+            @Html.DisplayFor(model => model.EngDispositionTypeName)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="EngDispositionTypeId" />
+        <div class="form-group">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+        <div class="form-group">
+            <partial name="_BackToList" />
+        </div>
+    </form>
+</div>

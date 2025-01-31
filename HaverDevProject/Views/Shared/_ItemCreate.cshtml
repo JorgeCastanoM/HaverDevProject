@@ -1,0 +1,29 @@
+﻿@model HaverDevProject.Models.Item
+
+<form asp-controller="Item" asp-action="Create" id="createItemForm">
+    <div class="text-danger validation-summary-errors"><ul id="ErrorListItem"></ul></div>    
+    <div class="row">
+        <div class="col-md-12">       
+            <div class="form-group">
+            <label asp-for="ItemNumber" class="control-label">
+                <strong>SAP No.</strong> <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="SAP No. that identifies the Item">(e.g. 207956254)</small>
+                <span class="fw-bold text-danger">*</span></label>
+                <input asp-for="ItemNumber" class="form-control" placeholder="SAP No." value="" />
+                <span asp-validation-for="ItemNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <label asp-for="ItemName" class="control-label">
+                <strong>Name</strong> <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Name">(e.g. Screw 1/4" .120)</small>
+                <span class="fw-bold text-danger">*</span></label>
+                <input asp-for="ItemName" class="form-control" placeholder="Name" />
+                <span asp-validation-for="ItemName" class="text-danger"></span>
+            </div>    
+            <div class="form-group text-end">
+            <input type="submit" id="submitItemCreate" value="Create" class="btn btn-primary" />
+            </div>        
+        </div>
+    </div>
+</form>
+
+
+

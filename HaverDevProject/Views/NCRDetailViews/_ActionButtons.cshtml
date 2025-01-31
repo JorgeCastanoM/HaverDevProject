@@ -1,0 +1,19 @@
+﻿<div class="container-fluid mt-3">
+    <div class="row justify-content-center">
+        <div id="QaSection" class="col-md-10 mx-0">
+            <div class="form-group d-flex justify-content-end mt-2">
+                <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn custom-btn-color">
+                    <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
+                </button>
+                <div>
+                    @if (Model.Ncr.NcrPhase != NcrPhase.Closed || Model.Ncr.NcrReInspect.NcrReInspectCreationDate > DateTime.Now.AddHours(-24))
+                    {
+                        <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@ViewBag.NCRSectionID">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

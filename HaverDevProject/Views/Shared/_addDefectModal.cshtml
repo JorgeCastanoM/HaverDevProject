@@ -1,0 +1,17 @@
+﻿<!-- Defect Modal-->
+<div class="modal fade" id="addDefectModal" tabindex="-1" role="dialog" aria-labelledby="DefectModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-custom-color">
+                <h4 class="modal-title" id="DefectmyModalLabel">Add New Defect</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body px-4">
+                @{
+                    var defect = new HaverDevProject.Models.Defect();
+                    <partial name="_DefectCreate" model="defect" />
+                }
+            </div>
+        </div>
+    </div>
+</div>

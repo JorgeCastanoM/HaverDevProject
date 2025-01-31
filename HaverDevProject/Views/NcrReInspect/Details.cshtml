@@ -1,0 +1,38 @@
+﻿@model HaverDevProject.Models.NcrReInspect
+
+<div class="container-fluid mt-2">
+    <div class="row justify-content-center">
+        <div id="contentToDownload" class="col-md-10 mx-0">
+
+    @await Html.PartialAsync("~/Views/NCRDetailViews/_HeadingDetails.cshtml", Model)
+
+    @if (Model.Ncr.NcrQa != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)        
+    }
+
+    @if (Model.Ncr.NcrEng != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)        
+    }
+
+    @if (Model.Ncr.NcrOperation != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.Ncr.NcrOperation)     
+    }
+
+    @if (Model.Ncr.NcrProcurement != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.Ncr.NcrProcurement)        
+    }
+
+    @if (Model.Ncr.NcrReInspect != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)        
+    }
+        </div>
+    </div>
+</div>
+
+
+@await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtons.cshtml", Model)

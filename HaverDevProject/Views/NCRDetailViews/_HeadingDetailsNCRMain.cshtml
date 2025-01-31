@@ -1,0 +1,47 @@
+﻿<h1><i class="bi bi-caret-right-fill"></i>Non Conforming Report Details</h1>
+<div class="row align-items-center mb-3 mt-4">
+    <div class="col-auto fw-bold fs-5">
+        NCR No.:
+    </div>
+    <div class="col-auto fs-5">
+        @Model.NcrNumber
+    </div>
+    @if (Model.NcrPhase != NcrPhase.Archive && Model.NcrPhase != NcrPhase.Void)
+    {
+        <div class="col-auto">
+            <span class="btn @(Model.NcrStatus == false ? "text-white bg-danger" : "text-white bg-success")" style="cursor: default;">
+                @(Model.NcrStatus == true ? "Active" : "Closed")
+            </span>
+        </div>
+    }
+    @if (Model.NcrPhase == NcrPhase.Archive)
+    {
+        <div class="col-auto">
+            <span class="btn text-white bg-secondary" style="cursor: default;">
+                Archived
+            </span>
+        </div>
+
+
+    }
+    @if (Model.NcrPhase == NcrPhase.Void)
+    {
+        <div class="col-auto">
+            <span class="btn text-white bg-danger" style="cursor: default;">
+                Void
+            </span>
+        </div>
+
+    }
+    @if (Model.NcrStatus == true)
+    {
+        <div class="col-auto">
+            <span class="fw-bold px-2">Phase:</span>
+            <span class="btn text-white bg-secondary" style="cursor: default;"> @Model.NcrPhase </span>
+        </div>
+    }
+    <div class="col-auto">
+        <span class="fw-bold">Last Updated: </span>
+        <span> @Model.NcrLastUpdated.ToString("yyyy-MM-dd")</span>
+    </div>
+</div>

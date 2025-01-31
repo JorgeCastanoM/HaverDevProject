@@ -1,0 +1,334 @@
+﻿@model IEnumerable<HaverDevProject.Models.Ncr>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@* MODALS *@
+<div class="modal fade" id="voidConfirmationModal" tabindex="-1" aria-labelledby="voidConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="voidConfirmationModalLabel">Void NCR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label for="voidReasonInput" class="form-label">Please provide a reason for voiding this NCR:</label>
+                <textarea class="form-control" id="voidReasonInput" rows="3" placeholder="Enter reason..." name="NcrVoidReason"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmVoidButton">Void</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* TOP OF PAGE *@
+<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="ncrLog-tab" data-bs-toggle="tab" href="#ncrLog" role="tab" aria-controls="ncrLog" aria-selected="true">NCR Log</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="archive-tab" href="/Ncr/Archived">Archive</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="void-tab" href="/Ncr/Void">Void</a>
+    </li>
+</ul>
+
+@* BODY *@
+<form id="ncrForm" asp-action="Index" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
+    <div class="row mt-3 mb-2">
+        <div class="col-8">
+            <div class="d-flex justify-content-start">
+                <input type="radio" class="btn-check btn-filter" name="filter" id="All" autocomplete="off" value="All" data-filter="All">
+                <label class="btn @ViewData["filterApplied:ButtonAll"] me-2" for="All">All NCRs</label>
+
+                <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
+                <label class="btn @ViewData["filterApplied:ButtonActive"] me-2" for="Active">Active NCRs</label>
+
+                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
+                <label class="btn @ViewData["filterApplied:ButtonClosed"] me-2" for="Closed">Closed NCRs </label>
+            </div>
+        </div>
+        <div class="col-4 text-end">
+            <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                @ViewData["numberFilters"]
+            </button>
+        </div>
+    </div>
+
+    <div class="form-horizontal">
+        <div class="card card-body bg-custom-color mb-2">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                    <label class="control-label">Filter by Suppliers:</label>
+                    @Html.TextBox("SearchSupplier", null, new { @class = "form-control" })
+                </div>
+                <div class="form-group col-lg-2">
+                    <label class="control-label">Start Date:</label>
+                    @Html.TextBox("StartDate", @ViewData["StartDate"], new { @class = "form-control", type = "date" })
+
+                </div>
+                <div class="form-group col-lg-2">
+                    <label class="control-label">End Date:</label>
+                    @Html.TextBox("EndDate", @ViewData["EndDate"], new { @class = "form-control", type = "date" })
+                </div>
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                    <label class="control-label mb-1">Find by NCR # or Defect :</label>
+                    @Html.TextBox("SearchCode", null, new { @class = "form-control" })
+                </div>
+                <div class="form-group col-lg-2 col-md-7 col-sm-10 col-10 align-self-end">
+                    <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2" />
+                    <a asp-action="Index" class="btn btn-outline-dark ms-4">Clear</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="table table-hover table-striped">
+        <thead class="custom-header-bg">
+            <tr>
+                <th></th>
+                <th style="width: 10%;" class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
+                        Created
+                        @Html.Raw(ViewData["filterApplied:Created"])
+                    </button>
+                </th>
+                <th style="width: 10%;">
+                    <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
+                        NCR #
+                        @Html.Raw(ViewData["filterApplied:NcrNumber"])
+                    </button>
+                </th>
+                <th style="width: 15%;" class="col-3">
+                    <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
+                        Supplier
+                        @Html.Raw(ViewData["filterApplied:Supplier"])
+                    </button>
+                </th>
+                <th style="width: 15%;" class="three-cols">
+                    <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
+                        Defect
+                        @Html.Raw(ViewData["filterApplied:Defect"])
+                    </button>
+                </th>
+                <th style="width: 15%;" class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="PO Number" class="btn text-light custom-btn-text-start">
+                        PO Number
+                        @Html.Raw(ViewData["filterApplied:PONumber"])
+                    </button>
+                </th>
+                <th style="width: 10%;" class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
+                        Phase
+                        @Html.Raw(ViewData["filterApplied:Phase"])
+                    </button>
+                </th>
+
+                <th style="width: 15%;" class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Last Updated" class="btn text-light custom-btn-text-start">
+                        Last Updated
+                        @Html.Raw(ViewData["filterApplied:Last Updated"])
+                    </button>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Where(ncr => ncr.NcrPhase != NcrPhase.Archive && ncr.NcrPhase != NcrPhase.Void))
+            {
+                <tr>
+                    <td class="ps-1 @((item.NcrStatus == true) ? "stillactive" : "closed" )">
+                        <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.NcrStatus == true) ? "Active" : "Closed")"></i>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrQa.NcrQacreationDate)
+                    </td>
+                    <td class="standout">
+                        @Html.DisplayFor(modelItem => item.NcrNumber)
+                    </td>
+                    <td class="col-3">
+                        @Html.DisplayFor(modelItem => item.NcrQa.Supplier.SupplierName)
+                    </td>
+                    <td class="three-cols">
+                        @Html.DisplayFor(modelItem => item.NcrQa.Defect.DefectName)
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrQa.NcrQaOrderNumber)
+                    </td>
+                    @* <td class="@((item.Ncr.NcrStatus == true) ? "stillactive" : "closed")">
+                @Html.DisplayFor(modelItem => item.Ncr.NcrStatus)
+                </td> *@
+                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrPhase)
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrLastUpdated)
+                    </td>
+                    @* Buttons for NCRs depending on Phase/Status *@
+                    <td class="align-middle">
+                        @if (item.NcrPhase == NcrPhase.Closed)
+                        {
+                            <div class="btn-group" role="group" aria-label="NCR Actions">
+                                <a asp-controller="Report" asp-action="DownloadPDFSections" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                </a>
+
+                                <a asp-action="Details" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+
+                                <a asp-action="ArchiveNcr" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Archive NCR">
+                                    <i class="bi bi-archive-fill"></i>
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="btn-group" role="group" aria-label="NCR Actions">
+                                <a asp-controller="Report" asp-action="DownloadPDFSections" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                </a>
+
+                                <a asp-action="Details" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+
+                                <a href="#" class="btn btn-sm btn-danger me-1 void-button" data-bs-toggle="tooltip" title="Void NCR" data-id="@item.NcrId">
+                                    <i class="bi bi-slash-circle"></i>
+                                </a>
+
+                            </div>
+                        }
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>
+
+@section Styles {
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+}
+@section Scripts {
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    @* Filtering *@
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.btn-filter').on('click', function () {
+
+                $('#filter').val($(this).data('filter'));
+                $('#ncrForm').submit();
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#StartDate, #EndDate").change(function () {
+                dateValidation();
+            });
+
+            // Function to validate date
+            function dateValidation() {
+                var startDate = new Date($("#StartDate").val());
+                var endDate = new Date($("#EndDate").val());
+
+                // Verifying if End Date is less than Start Date
+                if (endDate < startDate) {
+                    alert("End date should be greater than Start Date");
+                    $("#EndDate").val("");
+                }
+            }
+        });
+    </script>
+
+    @* For Autocomplete fields *@
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <script type="text/javascript">
+        $('#SearchSupplier').autocomplete({
+            minLength: 1,
+            source: '@Url.Action("GetSuppliersAuto", "Ncr")'
+        });
+    </script>
+
+    @* Designated filter Active *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filters = document.querySelectorAll('.btn-filter');
+            const activeFilter = localStorage.getItem('activeFilter');
+
+            if (activeFilter) {
+                filters.forEach(filter => {
+                    if (filter.value === activeFilter) {
+                        filter.checked = true;
+                    }
+                });
+            }
+
+            filters.forEach(filter => {
+                filter.addEventListener('change', function () {
+                    localStorage.setItem('activeFilter', this.value);
+                });
+            });
+        });
+    </script>
+
+    @* Voiding Modal for Reason *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const voidButtons = document.querySelectorAll('.void-button');
+            const confirmVoidButton = document.getElementById('confirmVoidButton');
+
+            let currentNcrId;
+
+            voidButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    currentNcrId = this.getAttribute('data-id');
+                    $('#voidConfirmationModal').modal('show');
+                });
+            });
+
+            confirmVoidButton.addEventListener('click', function () {
+                const voidReason = document.getElementById('voidReasonInput').value;
+                if (!voidReason) {
+                    alert('Please provide a reason for voiding the NCR.');
+                    return;
+                }
+
+                window.location.href = `/Ncr/VoidNcr?id=${currentNcrId}&voidReason=${encodeURIComponent(voidReason)}`;
+            });
+
+
+            $('#voidConfirmationModal').on('hidden.bs.modal', function () {
+                currentNcrId = null;
+                document.getElementById('voidReasonInput').value = '';
+            });
+        });
+    </script>
+
+
+
+}
+

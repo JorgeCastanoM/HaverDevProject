@@ -1,0 +1,64 @@
+﻿<div class="container-fluid mt-3">
+    <div class="row justify-content-center">
+        <div id="QaSection" class="col-md-10 mx-0">
+            <div class="form-group d-flex justify-content-end mt-2">
+                <div>
+                    @if (Model.NcrPhase == NcrPhase.Archive)
+                    {
+                        <button type="button" onclick="location.href='@Url.Action("Archived")'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the Archived Log
+                        </button>
+                    }
+                </div>
+                <div>
+                    @if (Model.NcrPhase == NcrPhase.Void)
+                    {
+                        <button type="button" onclick="location.href='@Url.Action("Void")'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the Void Log
+                        </button>
+                    }
+                </div>
+                <div>
+                    @if (Model.NcrPhase != NcrPhase.Void && Model.NcrPhase != NcrPhase.Archive)
+                    {
+                        <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
+                        </button>
+                    }
+                </div>
+                <div>
+                    @if (Model.NcrPhase == NcrPhase.Closed)
+                    {
+                        <form asp-action="ArchiveNcr" asp-route-id="@Model.NcrId" method="post">
+                            <button type="submit" class="btn btn-danger ms-4" data-bs-toggle="tooltip" title="Archive NCR">
+                                <i class="bi bi-archive-fill"></i> Archive NCR
+                            </button>
+                        </form>
+
+                    }
+                </div>
+                <div>
+                    @if (Model.NcrPhase == NcrPhase.Archive)
+                    {
+                        <form asp-action="RestoreNcr" asp-route-id="@Model.NcrId" method="post">
+                            <button type="submit" class="btn btn-success ms-4" data-bs-toggle="tooltip" title="Restore NCR">
+                                <i class="bi bi-archive-fill"></i> Restore NCR
+                            </button>
+                        </form>
+                    }
+                </div>
+                <div>
+                    @if (Model.NcrStatus == true)
+                    {
+                        <form asp-action="VoidNcr" asp-route-id="@Model.NcrId" method="post">
+                            <button type="submit" class="btn btn-danger ms-4" data-bs-toggle="tooltip" title="Void NCR">
+                                <i class="bi bi-slash-circle"></i> Void NCR
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
