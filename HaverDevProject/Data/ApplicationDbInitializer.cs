@@ -68,6 +68,24 @@ namespace HaverDevProject.Data
                         userManager.AddToRoleAsync(user, "Admin").Wait();
                     }
                 }
+                if (userManager.FindByEmailAsync("admin@outlook.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Test",
+                        LastName = "User",
+                        UserName = "admin@outlook.com",
+                        Email = "admin@outlook.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Admin").Wait();
+                    }
+                }
                 if (userManager.FindByEmailAsync("l.pentland@haverniagara.ca").Result == null)
                 {
                     ApplicationUser user = new ApplicationUser
